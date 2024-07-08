@@ -2,7 +2,7 @@ import { dataService } from "../service/data.service";
 import cron from "node-cron";
 
 export function cronStart() {
-  cron.schedule("*/2 * * * *", async () => {
+  cron.schedule("*/58 * * * *", async () => {
     try {
       const limaTime = new Date().toLocaleString("en-US", {
         timeZone: "America/Lima",
