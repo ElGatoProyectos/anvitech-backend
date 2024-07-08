@@ -16,6 +16,7 @@ exports.reportController = void 0;
 const data_service_1 = require("../service/data.service");
 const report_service_1 = require("../service/report.service");
 const multer_1 = __importDefault(require("multer"));
+const prisma_1 = __importDefault(require("../prisma"));
 const storage = multer_1.default.memoryStorage();
 const upload = (0, multer_1.default)({ storage: storage });
 class ReportController {
@@ -269,6 +270,30 @@ class ReportController {
                 response.status(responseData.statusCode).json(responseData.content);
             }
             catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    reportGenerateDate(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { daySelectedReport } = request.body;
+                const dataSplit = daySelectedReport.split("-");
+                const newFormat = daySelectedReport + "T05:00:00.000Z";
+                const results = yield prisma_1.default.detailReport.findMany({
+                    where: { fecha_reporte: new Date(newFormat) },
+                });
+                if (results.length > 0) {
+                    response.status(500).json({ message: "Ya hay registros de ese dia" });
+                }
+                else {
+                    yield data_service_1.dataService.instanceDataInit(Number(dataSplit[2]), Number(dataSplit[2]), Number(dataSplit[0]), Number(dataSplit[1]));
+                    response.status(200).json({ message: "Report successfully" });
+                }
+                yield prisma_1.default.$disconnect();
+            }
+            catch (error) {
+                yield prisma_1.default.$disconnect();
                 response.status(500).json(error);
             }
         });

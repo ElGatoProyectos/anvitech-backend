@@ -15,6 +15,7 @@ const workers_controller_1 = require("../controllers/workers.controller");
 const auth_controller_1 = require("../controllers/auth.controller");
 const router = express_1.default.Router();
 router.post("/auth", auth_controller_1.authController.login);
+router.post("/reports/generate/day", report_controller_1.reportController.reportGenerateDate);
 router.put("/detail-report/:id", controller_1.controller.detailReportPut);
 // Incidents routes
 router.get("/incidents/:id", controller_1.controller.incidentGetId);

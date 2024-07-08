@@ -19,15 +19,16 @@ class AuthController {
     login(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { dni, password } = yield request.body;
-                const responseData = yield user_service_1.userService.findByDni(dni);
+                const { username, password } = yield request.body;
+                const responseData = yield user_service_1.userService.findByDni(username);
                 if (!responseData.ok) {
                     response
                         .status(401)
                         .json({ message: "Error in authorization request" });
                 }
                 else {
-                    if (bcrypt_1.default.compareSync(password, responseData.content.password)) {
+                    const responseCompare = bcrypt_1.default.compareSync(password, responseData.content.password);
+                    if (responseCompare) {
                         const formatData = {
                             id: responseData.content.id,
                             role: responseData.content.role,

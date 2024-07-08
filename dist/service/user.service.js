@@ -143,7 +143,7 @@ class UserService {
                 // updateUserDTO.parse(data);
                 let updatedUser;
                 if (data.password === "") {
-                    const { passowrd } = data, allData = __rest(data, ["passowrd"]);
+                    const { password } = data, allData = __rest(data, ["password"]);
                     updatedUser = yield prisma_1.default.user.update({
                         where: { id: userId },
                         data: allData,

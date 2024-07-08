@@ -31,6 +31,7 @@ class DataService {
                 const max = maxDay !== null && maxDay !== void 0 ? maxDay : saturday;
                 const year = selectedYear !== null && selectedYear !== void 0 ? selectedYear : dataYear;
                 const month = selectedMonth !== null && selectedMonth !== void 0 ? selectedMonth : dataMonth;
+                console.log(min, max, year, month);
                 /// obtener el token para hacer la peticion post
                 const responseToken = yield anviz_service_1.anvizService.getToken();
                 if (!responseToken.ok)
