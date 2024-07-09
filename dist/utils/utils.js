@@ -16,7 +16,7 @@ exports.cronStart = void 0;
 const data_service_1 = require("../service/data.service");
 const node_cron_1 = __importDefault(require("node-cron"));
 function cronStart() {
-    node_cron_1.default.schedule("*/58 * * * *", () => __awaiter(this, void 0, void 0, function* () {
+    node_cron_1.default.schedule("*/1 * * * *", () => __awaiter(this, void 0, void 0, function* () {
         try {
             const limaTime = new Date().toLocaleString("en-US", {
                 timeZone: "America/Lima",
@@ -31,7 +31,7 @@ function cronStart() {
                 const month = previousDayDate.getMonth() + 1;
                 const year = previousDayDate.getFullYear();
                 const currentHour = new Date(limaTime).getHours();
-                if (currentHour === 19) {
+                if (currentHour === 5) {
                     yield data_service_1.dataService.instanceDataInit(dayOfMonth, dayOfMonth, year, month, true);
                 }
             }
