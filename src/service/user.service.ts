@@ -177,10 +177,11 @@ class UserService {
     }
   }
 
-  async registerMassive(file: File) {
+  async registerMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];

@@ -1,3 +1,4 @@
+import prisma from "../prisma";
 import { dataService } from "../service/data.service";
 import cron from "node-cron";
 
@@ -20,14 +21,23 @@ export function cronStart() {
         const year = previousDayDate.getFullYear();
         const currentHour = new Date(limaTime).getHours();
 
+        // validamos si existen registros para esa fecha
+        const newDateFormat =
+          year + "-" + month + "-" + dayOfMonth + " 05:00:00.000";
+
         if (currentHour === 5) {
-          await dataService.instanceDataInit(
-            dayOfMonth,
-            dayOfMonth,
-            year,
-            month,
-            true
-          );
+          const response = await prisma.detailReport.findMany({
+            where: { fecha_reporte: newDateFormat },
+          });
+          if (response.length === 0) {
+            await dataService.instanceDataInit(
+              dayOfMonth,
+              dayOfMonth,
+              year,
+              month,
+              true
+            );
+          }
         }
       }
     } catch (error) {

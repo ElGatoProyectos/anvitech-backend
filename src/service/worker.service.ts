@@ -35,10 +35,11 @@ class WorkerService {
   }
 
   /// registros masivos ok, deben evitarse ingresar registros duplicados en el excel si no ninguno se registrara
-  async fileToRegisterMassive(file: File) {
+  async fileToRegisterMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -99,6 +100,7 @@ class WorkerService {
       await prisma.$disconnect();
       return httpResponse.http201("Workers created");
     } catch (error) {
+      console.log(error);
       await prisma.$disconnect();
       return errorService.handleErrorSchema(error);
     }
@@ -212,10 +214,11 @@ class WorkerService {
     }
   }
 
-  async registerTerminationMassive(file: File) {
+  async registerTerminationMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -247,10 +250,12 @@ class WorkerService {
     }
   }
 
-  async updateSupervisorMassive(file: File) {
+  async updateSupervisorMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -279,10 +284,12 @@ class WorkerService {
     }
   }
 
-  async registerVacationMassive(file: File) {
+  async registerVacationMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -318,10 +325,11 @@ class WorkerService {
     }
   }
 
-  async registerLincensesMasive(file: File) {
+  async registerLincensesMasive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -357,10 +365,12 @@ class WorkerService {
     }
   }
 
-  async registerMedicalRestMassive(file: File) {
+  async registerMedicalRestMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -396,10 +406,12 @@ class WorkerService {
     }
   }
 
-  async registerPermissionsMassive(file: File) {
+  async registerPermissionsMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];

@@ -3,6 +3,8 @@ import { userService } from "../service/user.service";
 import { reportService } from "../service/report.service";
 import { incidentService } from "../service/incident.service";
 import { permissionService } from "../service/permission.service";
+import { licenceService } from "../service/licence.service";
+import { medicalRestService } from "../service/medical-rest.service";
 
 class Controller {
   // todo used
@@ -82,6 +84,78 @@ class Controller {
     try {
       const body = request.body;
       const serviceResponse = await permissionService.create(body);
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async permissionIdPut(request: Request, response: Response): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await permissionService.edit(body, Number(id));
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async permissionIdDelete(
+    request: Request,
+    response: Response
+  ): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await permissionService.delete(Number(id));
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async licensePutId(request: Request, response: Response): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await licenceService.edit(body, Number(id));
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async licenseDeleteId(request: Request, response: Response): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await licenceService.delete(Number(id));
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async MedicalRestPutId(request: Request, response: Response): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await medicalRestService.edit(body, Number(id));
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async MedicalRestDeleteId(
+    request: Request,
+    response: Response
+  ): Promise<void> {
+    try {
+      const body = request.body;
+      const id = request.params.id;
+      const serviceResponse = await medicalRestService.delete(Number(id));
       response.status(serviceResponse.statusCode).json(serviceResponse.content);
     } catch (error) {
       response.status(500).json(error);

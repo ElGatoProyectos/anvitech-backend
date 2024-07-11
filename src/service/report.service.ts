@@ -681,10 +681,12 @@ class ReportService {
     }
   }
 
-  async uploadReportMassive(file: File) {
+  async uploadReportMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];
@@ -875,10 +877,12 @@ class ReportService {
     }
   }
 
-  async uploadUpdateReportMassive(file: File) {
+  async uploadUpdateReportMassive(file: any) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];

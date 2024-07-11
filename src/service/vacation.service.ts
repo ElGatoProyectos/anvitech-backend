@@ -59,10 +59,52 @@ class VacationService {
     }
   }
 
-  async registerMassive(file: File) {
+  async edit(data: any, vacationId: number) {
     try {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      const vacation = await prisma.vacation.findFirst({
+        where: { id: vacationId },
+      });
+
+      if (!vacation) return httpResponse.http400("Error in update");
+
+      const formatData = {
+        start_date: data.start_date
+          ? new Date(data.start_date)
+          : vacation.start_date,
+        end_date: data.end_date ? new Date(data.end_date) : vacation.end_date,
+        reason: data.reason ? data.reason : vacation.reason,
+      };
+      await prisma.vacation.update({
+        where: { id: vacationId },
+        data: formatData,
+      });
+      return httpResponse.http200("Vacation updated");
+    } catch (error) {
+      console.log(error);
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  async delete(vacationId: number) {
+    try {
+      const vacation = await prisma.vacation.findFirst({
+        where: { id: vacationId },
+      });
+
+      if (!vacation) return httpResponse.http400("Error in deleted");
+
+      await prisma.vacation.delete({ where: { id: vacationId } });
+      return httpResponse.http200("Vacation deleted");
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  async registerMassive(file: any) {
+    try {
+      // const bytes = await file.arrayBuffer();
+      // const buffer = Buffer.from(bytes);
+      const buffer = file.buffer;
 
       const workbook = xlsx.read(buffer, { type: "buffer" });
       const sheetName = workbook.SheetNames[0];

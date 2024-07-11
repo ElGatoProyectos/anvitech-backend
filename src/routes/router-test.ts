@@ -22,6 +22,14 @@ router.put("/incidents/:id", controller.incidentPutId);
 
 // Permissions routes
 router.post("/permissions", controller.permissionPost);
+router.put("/permissions/:id", controller.permissionIdPut);
+router.delete("/permissions/:id", controller.permissionIdDelete);
+
+router.put("/licences/:id", controller.licensePutId);
+router.delete("/licences/:id", controller.licenseDeleteId);
+
+router.put("/medical-rest/:id", controller.MedicalRestPutId);
+router.delete("/medical-rest/:id", controller.MedicalRestDeleteId);
 
 // Report-dynamic routes
 router.post("/report-dynamic", (req, res) => {
@@ -70,6 +78,8 @@ router.delete("/users/:id", userController.userIdDelete);
 
 // Vacations routes
 router.post("/vacations", vacationController.vacationPost);
+router.put("/vacations/:id", vacationController.vacationIdPut);
+router.delete("/vacations/:id", vacationController.vacationIdDelete);
 
 // W-access-data routes
 router.get("/w-access-data/:token", (req, res) => {

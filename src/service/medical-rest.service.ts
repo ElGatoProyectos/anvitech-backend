@@ -48,6 +48,48 @@ class MedicalRestService {
       return errorService.handleErrorSchema(error);
     }
   }
+
+  async edit(data: any, medicalRestId: number) {
+    try {
+      const medicalRest = await prisma.medicalRest.findFirst({
+        where: { id: medicalRestId },
+      });
+
+      if (!medicalRest) return httpResponse.http400("Error in update");
+
+      const formatData = {
+        start_date: data.start_date
+          ? new Date(data.start_date)
+          : medicalRest.start_date,
+        end_date: data.end_date
+          ? new Date(data.end_date)
+          : medicalRest.end_date,
+        reason: data.reason ? data.reason : medicalRest.reason,
+      };
+      await prisma.medicalRest.update({
+        where: { id: medicalRestId },
+        data: formatData,
+      });
+      return httpResponse.http200("Medical rest updated");
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  async delete(medicalRestId: number) {
+    try {
+      const medicalRest = await prisma.medicalRest.findFirst({
+        where: { id: medicalRestId },
+      });
+
+      if (!medicalRest) return httpResponse.http400("Error in deleted");
+
+      await prisma.medicalRest.delete({ where: { id: medicalRestId } });
+      return httpResponse.http200("Medical rest deleted");
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    }
+  }
 }
 
 export const medicalRestService = new MedicalRestService();

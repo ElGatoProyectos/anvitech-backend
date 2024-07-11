@@ -63,7 +63,7 @@ model DetailReport {
 model Worker {
   id Int @id @default(autoincrement())
 
-  full_name     String
+  full_name     String  @db.Text
   dni           String  @unique
   type_dni      String?
   type_contract String?

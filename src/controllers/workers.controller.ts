@@ -73,6 +73,7 @@ class WorkerController {
 
   async workerFilePost(request: any, response: Response): Promise<void> {
     // Usando multer para manejar la subida de archivos en memoria
+
     upload.single("file")(request, response, async (err) => {
       if (err) {
         return response.status(500).json({ error: "Error uploading file" });
@@ -86,8 +87,9 @@ class WorkerController {
       try {
         const serviceResponse = await workerService.fileToRegisterMassive(file);
 
-        response.status(200).json(serviceResponse);
+        response.status(serviceResponse.statusCode).json(serviceResponse);
       } catch (error) {
+        console.log(error);
         response.status(500).json(error);
       }
     });

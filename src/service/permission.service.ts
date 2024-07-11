@@ -53,6 +53,48 @@ class PermissionService {
       return errorService.handleErrorSchema(error);
     }
   }
+
+  async edit(data: any, permissionId: number) {
+    try {
+      const permissions = await prisma.permissions.findFirst({
+        where: { id: permissionId },
+      });
+
+      if (!permissions) return httpResponse.http400("Error in update");
+
+      const formatData = {
+        start_date: data.start_date
+          ? new Date(data.start_date)
+          : permissions.start_date,
+        end_date: data.end_date
+          ? new Date(data.end_date)
+          : permissions.end_date,
+        reason: data.reason ? data.reason : permissions.reason,
+      };
+      await prisma.permissions.update({
+        where: { id: permissionId },
+        data: formatData,
+      });
+      return httpResponse.http200("Medical rest updated");
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  async delete(permissionId: number) {
+    try {
+      const permissions = await prisma.permissions.findFirst({
+        where: { id: permissionId },
+      });
+
+      if (!permissions) return httpResponse.http400("Error in deleted");
+
+      await prisma.permissions.delete({ where: { id: permissionId } });
+      return httpResponse.http200("Medical rest deleted");
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    }
+  }
 }
 
 export const permissionService = new PermissionService();

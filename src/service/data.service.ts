@@ -223,7 +223,7 @@ class DataService {
         "miercoles",
         "jueves",
         "viernes",
-        "sabato",
+        "sabado",
         "domingo",
       ];
       const promises = [];
@@ -323,9 +323,9 @@ class DataService {
       const schedule = responseSchedule.content;
       //- definimos las horas del horario ====================================================
 
-      // const [lunesStart, lunesEnd] = schedule.lunes.split("-");
+      const [lunesStart, lunesEnd] = schedule.lunes.split("-");
       // ! corregir esto
-      const [lunesStart, lunesEnd] = "09:00-18:00".split("-");
+      // const [lunesStart, lunesEnd] = "09:00-18:00".split("-");
 
       const [hourStart, minutesStart] = lunesStart.split(":");
       const [hourEnd, minutesEnd] = lunesEnd.split(":");
@@ -335,10 +335,8 @@ class DataService {
         tardanza: "no",
         falta: "no",
         dia: dayString,
-        // fecha_reporte: report.date_created.toISOString(),?
         fecha_reporte: new Date(yearI, monthI - 1, dayI),
         worker_status: worker.enabled,
-
         dni: worker.dni,
         nombre: worker.full_name,
         supervisor: worker.supervisor,
@@ -373,6 +371,7 @@ class DataService {
           if (newHour <= 11) {
             formatData.hora_inicio = newHour + ":" + minutes;
             if (newHour > Number(hourStart)) {
+              // si es mas que las 9 am o sea 10 am
               formatData.tardanza = "si";
               formatData.discount = 35;
             } else {
@@ -391,6 +390,8 @@ class DataService {
                 }
               } else {
                 formatData.tardanza = "no";
+                formatData.falta = "no";
+                formatData.discount = 0;
               }
             }
           } else if (newHour >= 12 && newHour <= 16) {
@@ -410,115 +411,114 @@ class DataService {
             formatData.hora_salida = newHour + ":" + minutes;
           }
         });
-
-        // ========================================================= caso de vacaciones y permisos =============================================================
-      } else {
-        const dateYesterday = new Date();
-        dateYesterday.setDate(dateYesterday.getDate() - 1);
-
-        //- validamos si esta de vacaciones, permiso, licencia o descanso medico
-
-        // validamos las vacaciones
-
-        const vacationResponse = await prisma.vacation.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-        // validamos los permisos
-
-        const permissionResponse = await prisma.permissions.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos licencias
-
-        const licencesResponse = await prisma.licence.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos los descansos medicos
-
-        const medicalRestResponse = await prisma.medicalRest.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos incidencias
-
-        const incidentResponse = await prisma.incident.findMany({
-          where: {
-            date: dateYesterday,
-          },
-        });
-
-        if (
-          vacationResponse.length > 0 ||
-          permissionResponse.length > 0 ||
-          licencesResponse.length > 0 ||
-          medicalRestResponse.length > 0 ||
-          incidentResponse.length > 0
-        ) {
-          formatData.falta = "no";
-          formatData.tardanza = "no";
-          formatData.discount = 0;
-        }
       }
 
-      if (dataDayForWorker.length !== 4) {
+      // ========================================================= caso de vacaciones y permisos =============================================================
+      const dateYesterday = new Date();
+      dateYesterday.setDate(dateYesterday.getDate() - 1);
+
+      //- validamos si esta de vacaciones, permiso, licencia o descanso medico
+
+      // validamos las vacaciones
+
+      const vacationResponse = await prisma.vacation.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+      // validamos los permisos
+
+      const permissionResponse = await prisma.permissions.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos licencias
+
+      const licencesResponse = await prisma.licence.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos los descansos medicos
+
+      const medicalRestResponse = await prisma.medicalRest.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos incidencias
+
+      const incidentResponse = await prisma.incident.findMany({
+        where: {
+          date: dateYesterday,
+        },
+      });
+
+      if (
+        vacationResponse.length > 0 ||
+        permissionResponse.length > 0 ||
+        licencesResponse.length > 0 ||
+        medicalRestResponse.length > 0 ||
+        incidentResponse.length > 0
+      ) {
+        formatData.falta = "no";
+        formatData.tardanza = "no";
+        formatData.discount = 0;
+      }
+
+      if (dataDayForWorker.length < 4) {
         formatData.falta = "si";
         formatData.tardanza = "no";
         formatData.discount = 35;
@@ -580,6 +580,7 @@ class DataService {
 
       if (dataDayForWorker.length) {
         //! formatData.sede=dataFiltered[0].device.name,
+
         dataDayForWorker.map((item, index) => {
           const horaCompleta = item.checktime.split("T")[1].split("+")[0];
 
@@ -594,6 +595,7 @@ class DataService {
           if (newHour <= 11) {
             formatData.hora_inicio = newHour + ":" + minutes;
             if (newHour > Number(hourStart)) {
+              // si es mas que las 9 am o sea 10 am
               formatData.tardanza = "si";
               formatData.discount = 35;
             } else {
@@ -612,6 +614,8 @@ class DataService {
                 }
               } else {
                 formatData.tardanza = "no";
+                formatData.falta = "no";
+                formatData.discount = 0;
               }
             }
           } else if (newHour >= 12 && newHour <= 16) {
@@ -631,115 +635,117 @@ class DataService {
             formatData.hora_salida = newHour + ":" + minutes;
           }
         });
+      }
 
-        // ========================================================= caso de vacaciones y permisos =============================================================
-      } else {
-        const dateYesterday = new Date();
-        dateYesterday.setDate(dateYesterday.getDate() - 1);
+      // ========================================================= caso de vacaciones y permisos =============================================================
+      const dateYesterday = new Date();
+      dateYesterday.setDate(dateYesterday.getDate() - 1);
 
-        //- validamos si esta de vacaciones, permiso, licencia o descanso medico
+      //- validamos si esta de vacaciones, permiso, licencia o descanso medico
 
-        // validamos las vacaciones
+      // validamos las vacaciones
 
-        const vacationResponse = await prisma.vacation.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
+      const vacationResponse = await prisma.vacation.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
               },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
               },
-            ],
-          },
-        });
-        // validamos los permisos
+            },
+          ],
+        },
+      });
+      // validamos los permisos
 
-        const permissionResponse = await prisma.permissions.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
+      const permissionResponse = await prisma.permissions.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
               },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
               },
-            ],
-          },
-        });
+            },
+          ],
+        },
+      });
 
-        // validamos licencias
+      // validamos licencias
 
-        const licencesResponse = await prisma.licence.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
+      const licencesResponse = await prisma.licence.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
               },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
               },
-            ],
-          },
-        });
+            },
+          ],
+        },
+      });
 
-        // validamos los descansos medicos
+      // validamos los descansos medicos
 
-        const medicalRestResponse = await prisma.medicalRest.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
+      const medicalRestResponse = await prisma.medicalRest.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
               },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
               },
-            ],
-          },
-        });
+            },
+          ],
+        },
+      });
 
-        // validamos incidencias
+      // validamos incidencias
 
-        const incidentResponse = await prisma.incident.findMany({
-          where: {
-            date: dateYesterday,
-          },
-        });
+      const incidentResponse = await prisma.incident.findMany({
+        where: {
+          date: dateYesterday,
+        },
+      });
 
-        if (
-          vacationResponse.length > 0 ||
-          permissionResponse.length > 0 ||
-          licencesResponse.length > 0 ||
-          medicalRestResponse.length > 0 ||
-          incidentResponse.length > 0
-        ) {
-          formatData.falta = "no";
-          formatData.tardanza = "no";
-          formatData.discount = 0;
-        } else {
-          formatData.falta = "si";
-          formatData.discount = 35;
-        }
+      if (
+        vacationResponse.length > 0 ||
+        permissionResponse.length > 0 ||
+        licencesResponse.length > 0 ||
+        medicalRestResponse.length > 0 ||
+        incidentResponse.length > 0
+      ) {
+        formatData.falta = "no";
+        formatData.tardanza = "no";
+        formatData.discount = 0;
+      }
+
+      if (dataDayForWorker.length < 4) {
+        formatData.falta = "si";
+        formatData.tardanza = "no";
+        formatData.discount = 35;
       }
 
       return formatData;
@@ -867,113 +873,112 @@ class DataService {
         });
 
         // ========================================================= caso de vacaciones y permisos =============================================================
+      }
+      const dateYesterday = new Date();
+      dateYesterday.setDate(dateYesterday.getDate() - 1);
+
+      //- validamos si esta de vacaciones, permiso, licencia o descanso medico
+
+      // validamos las vacaciones
+
+      const vacationResponse = await prisma.vacation.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+      // validamos los permisos
+
+      const permissionResponse = await prisma.permissions.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos licencias
+
+      const licencesResponse = await prisma.licence.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos los descansos medicos
+
+      const medicalRestResponse = await prisma.medicalRest.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      // validamos incidencias
+
+      const incidentResponse = await prisma.incident.findMany({
+        where: {
+          date: dateYesterday,
+        },
+      });
+
+      if (
+        vacationResponse.length > 0 ||
+        permissionResponse.length > 0 ||
+        licencesResponse.length > 0 ||
+        medicalRestResponse.length > 0 ||
+        incidentResponse.length > 0
+      ) {
+        formatData.falta = "no";
+        formatData.tardanza = "no";
+        formatData.discount = 0;
       } else {
-        const dateYesterday = new Date();
-        dateYesterday.setDate(dateYesterday.getDate() - 1);
-
-        //- validamos si esta de vacaciones, permiso, licencia o descanso medico
-
-        // validamos las vacaciones
-
-        const vacationResponse = await prisma.vacation.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-        // validamos los permisos
-
-        const permissionResponse = await prisma.permissions.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos licencias
-
-        const licencesResponse = await prisma.licence.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos los descansos medicos
-
-        const medicalRestResponse = await prisma.medicalRest.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        // validamos incidencias
-
-        const incidentResponse = await prisma.incident.findMany({
-          where: {
-            date: dateYesterday,
-          },
-        });
-
-        if (
-          vacationResponse.length > 0 ||
-          permissionResponse.length > 0 ||
-          licencesResponse.length > 0 ||
-          medicalRestResponse.length > 0 ||
-          incidentResponse.length > 0
-        ) {
-          formatData.falta = "no";
-          formatData.tardanza = "no";
-          formatData.discount = 0;
-        } else {
-          formatData.falta = "si";
-          formatData.discount = 35;
-        }
+        formatData.falta = "si";
+        formatData.discount = 35;
       }
 
       await prisma.detailReport.create({ data: formatData });
@@ -1171,17 +1176,6 @@ class DataService {
               newHour = 23 - 4 + Number(hour);
             }
 
-            // if (index === dataFiltered.length - 1) {
-            //   if (newHour < 16) {
-            //     formatData.falta = "si";
-            //     formatData.tardanza = "no";
-            //     formatData.discount = 35;
-            //   }else{
-            //   formatData.hora_salida = newHour + ":" + minutes;
-
-            //   }
-            // }
-
             if (newHour <= 11) {
               formatData.hora_inicio = newHour + ":" + minutes;
               if (newHour > Number(hourStart)) {
@@ -1223,109 +1217,108 @@ class DataService {
             }
           });
         }
+      }
+      const dateYesterday = new Date();
+
+      //- validamos si esta de vacaciones o permiso
+
+      // validamos las vacaciones
+
+      const vacationResponse = await prisma.vacation.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+      // validamos los permisos
+
+      const permissionResponse = await prisma.permissions.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      const licencesResponse = await prisma.licence.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      const medicalRestResponse = await prisma.medicalRest.findMany({
+        where: {
+          worker_id: worker.id,
+          AND: [
+            {
+              start_date: {
+                lte: dateYesterday,
+              },
+            },
+            {
+              end_date: {
+                gte: dateYesterday,
+              },
+            },
+          ],
+        },
+      });
+
+      const incidentResponse = await prisma.incident.findMany({
+        where: {
+          date: dateYesterday,
+        },
+      });
+
+      if (
+        vacationResponse.length > 0 ||
+        permissionResponse.length > 0 ||
+        licencesResponse.length > 0 ||
+        medicalRestResponse.length > 0 ||
+        incidentResponse.length > 0
+      ) {
+        formatData.falta = "no";
+        formatData.tardanza = "no";
+        formatData.discount = 0;
       } else {
-        const dateYesterday = new Date();
-
-        //- validamos si esta de vacaciones o permiso
-
-        // validamos las vacaciones
-
-        const vacationResponse = await prisma.vacation.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-        // validamos los permisos
-
-        const permissionResponse = await prisma.permissions.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        const licencesResponse = await prisma.licence.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        const medicalRestResponse = await prisma.medicalRest.findMany({
-          where: {
-            worker_id: worker.id,
-            AND: [
-              {
-                start_date: {
-                  lte: dateYesterday,
-                },
-              },
-              {
-                end_date: {
-                  gte: dateYesterday,
-                },
-              },
-            ],
-          },
-        });
-
-        const incidentResponse = await prisma.incident.findMany({
-          where: {
-            date: dateYesterday,
-          },
-        });
-
-        if (
-          vacationResponse.length > 0 ||
-          permissionResponse.length > 0 ||
-          licencesResponse.length > 0 ||
-          medicalRestResponse.length > 0 ||
-          incidentResponse.length > 0
-        ) {
-          formatData.falta = "no";
-          formatData.tardanza = "no";
-          formatData.discount = 0;
-        } else {
-          formatData.falta = "si";
-          formatData.discount = 35;
-        }
+        formatData.falta = "si";
+        formatData.discount = 35;
       }
 
-      if (dataFiltered.length !== 4) {
+      if (dataFiltered.length < 4) {
         formatData.falta = "si";
         formatData.tardanza = "no";
         formatData.discount = 35;
