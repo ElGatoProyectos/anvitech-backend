@@ -687,8 +687,9 @@ class ReportService {
     uploadReportMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -853,8 +854,9 @@ class ReportService {
     uploadUpdateReportMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];

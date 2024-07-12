@@ -53,7 +53,7 @@ class LicenceService {
     findByWorker(workerId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const data = yield prisma_1.default.permissions.findMany({
+                const data = yield prisma_1.default.licence.findMany({
                     where: { worker_id: workerId },
                 });
                 yield prisma_1.default.$disconnect();
@@ -61,6 +61,48 @@ class LicenceService {
             }
             catch (error) {
                 yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    edit(data, licenseId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const licence = yield prisma_1.default.licence.findFirst({
+                    where: { id: licenseId },
+                });
+                if (!licence)
+                    return response_service_1.httpResponse.http400("Error in update");
+                const formatData = {
+                    start_date: data.start_date
+                        ? new Date(data.start_date)
+                        : licence.start_date,
+                    end_date: data.end_date ? new Date(data.end_date) : licence.end_date,
+                    reason: data.reason ? data.reason : licence.reason,
+                };
+                yield prisma_1.default.licence.update({
+                    where: { id: licenseId },
+                    data: formatData,
+                });
+                return response_service_1.httpResponse.http200("License updated");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    delete(licenseId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const licence = yield prisma_1.default.licence.findFirst({
+                    where: { id: licenseId },
+                });
+                if (!licence)
+                    return response_service_1.httpResponse.http400("Error in deleted");
+                yield prisma_1.default.licence.delete({ where: { id: licenseId } });
+                return response_service_1.httpResponse.http200("License deleted");
+            }
+            catch (error) {
                 return errors_service_1.errorService.handleErrorSchema(error);
             }
         });

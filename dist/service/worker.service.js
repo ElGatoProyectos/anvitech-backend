@@ -88,8 +88,9 @@ class WorkerService {
     fileToRegisterMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -134,6 +135,7 @@ class WorkerService {
                 return response_service_1.httpResponse.http201("Workers created");
             }
             catch (error) {
+                console.log(error);
                 yield prisma_1.default.$disconnect();
                 return errors_service_1.errorService.handleErrorSchema(error);
             }
@@ -256,8 +258,9 @@ class WorkerService {
     registerTerminationMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -287,8 +290,9 @@ class WorkerService {
     updateSupervisorMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -317,8 +321,9 @@ class WorkerService {
     registerVacationMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -350,8 +355,9 @@ class WorkerService {
     registerLincensesMasive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -383,8 +389,9 @@ class WorkerService {
     registerMedicalRestMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
@@ -416,8 +423,9 @@ class WorkerService {
     registerPermissionsMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];

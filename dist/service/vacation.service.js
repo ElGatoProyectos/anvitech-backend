@@ -97,11 +97,55 @@ class VacationService {
             }
         });
     }
+    edit(data, vacationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vacation = yield prisma_1.default.vacation.findFirst({
+                    where: { id: vacationId },
+                });
+                if (!vacation)
+                    return response_service_1.httpResponse.http400("Error in update");
+                const formatData = {
+                    start_date: data.start_date
+                        ? new Date(data.start_date)
+                        : vacation.start_date,
+                    end_date: data.end_date ? new Date(data.end_date) : vacation.end_date,
+                    reason: data.reason ? data.reason : vacation.reason,
+                };
+                yield prisma_1.default.vacation.update({
+                    where: { id: vacationId },
+                    data: formatData,
+                });
+                return response_service_1.httpResponse.http200("Vacation updated");
+            }
+            catch (error) {
+                console.log(error);
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    delete(vacationId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vacation = yield prisma_1.default.vacation.findFirst({
+                    where: { id: vacationId },
+                });
+                if (!vacation)
+                    return response_service_1.httpResponse.http400("Error in deleted");
+                yield prisma_1.default.vacation.delete({ where: { id: vacationId } });
+                return response_service_1.httpResponse.http200("Vacation deleted");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
     registerMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const bytes = yield file.arrayBuffer();
-                const buffer = Buffer.from(bytes);
+                // const bytes = await file.arrayBuffer();
+                // const buffer = Buffer.from(bytes);
+                const buffer = file.buffer;
                 const workbook = xlsx.read(buffer, { type: "buffer" });
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];

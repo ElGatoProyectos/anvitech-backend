@@ -65,5 +65,49 @@ class MedicalRestService {
             }
         });
     }
+    edit(data, medicalRestId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const medicalRest = yield prisma_1.default.medicalRest.findFirst({
+                    where: { id: medicalRestId },
+                });
+                if (!medicalRest)
+                    return response_service_1.httpResponse.http400("Error in update");
+                const formatData = {
+                    start_date: data.start_date
+                        ? new Date(data.start_date)
+                        : medicalRest.start_date,
+                    end_date: data.end_date
+                        ? new Date(data.end_date)
+                        : medicalRest.end_date,
+                    reason: data.reason ? data.reason : medicalRest.reason,
+                };
+                yield prisma_1.default.medicalRest.update({
+                    where: { id: medicalRestId },
+                    data: formatData,
+                });
+                return response_service_1.httpResponse.http200("Medical rest updated");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    delete(medicalRestId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const medicalRest = yield prisma_1.default.medicalRest.findFirst({
+                    where: { id: medicalRestId },
+                });
+                if (!medicalRest)
+                    return response_service_1.httpResponse.http400("Error in deleted");
+                yield prisma_1.default.medicalRest.delete({ where: { id: medicalRestId } });
+                return response_service_1.httpResponse.http200("Medical rest deleted");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
 }
 exports.medicalRestService = new MedicalRestService();

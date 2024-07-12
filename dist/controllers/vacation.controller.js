@@ -24,5 +24,30 @@ class VacationController {
             }
         });
     }
+    vacationIdPut(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield vacation_service_1.vacationService.edit(body, Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    vacationIdDelete(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = request.params.id;
+                const serviceResponse = yield vacation_service_1.vacationService.delete(Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
 }
 exports.vacationController = new VacationController();

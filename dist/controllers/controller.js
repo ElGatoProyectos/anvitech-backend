@@ -14,6 +14,8 @@ const user_service_1 = require("../service/user.service");
 const report_service_1 = require("../service/report.service");
 const incident_service_1 = require("../service/incident.service");
 const permission_service_1 = require("../service/permission.service");
+const licence_service_1 = require("../service/licence.service");
+const medical_rest_service_1 = require("../service/medical-rest.service");
 class Controller {
     // todo used
     createAdmin(request, response) {
@@ -104,6 +106,84 @@ class Controller {
             try {
                 const body = request.body;
                 const serviceResponse = yield permission_service_1.permissionService.create(body);
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    permissionIdPut(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield permission_service_1.permissionService.edit(body, Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    permissionIdDelete(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield permission_service_1.permissionService.delete(Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    licensePutId(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield licence_service_1.licenceService.edit(body, Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    licenseDeleteId(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield licence_service_1.licenceService.delete(Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    MedicalRestPutId(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield medical_rest_service_1.medicalRestService.edit(body, Number(id));
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    MedicalRestDeleteId(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const id = request.params.id;
+                const serviceResponse = yield medical_rest_service_1.medicalRestService.delete(Number(id));
                 response.status(serviceResponse.statusCode).json(serviceResponse.content);
             }
             catch (error) {

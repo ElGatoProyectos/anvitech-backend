@@ -72,5 +72,49 @@ class PermissionService {
             }
         });
     }
+    edit(data, permissionId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const permissions = yield prisma_1.default.permissions.findFirst({
+                    where: { id: permissionId },
+                });
+                if (!permissions)
+                    return response_service_1.httpResponse.http400("Error in update");
+                const formatData = {
+                    start_date: data.start_date
+                        ? new Date(data.start_date)
+                        : permissions.start_date,
+                    end_date: data.end_date
+                        ? new Date(data.end_date)
+                        : permissions.end_date,
+                    reason: data.reason ? data.reason : permissions.reason,
+                };
+                yield prisma_1.default.permissions.update({
+                    where: { id: permissionId },
+                    data: formatData,
+                });
+                return response_service_1.httpResponse.http200("Medical rest updated");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    delete(permissionId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const permissions = yield prisma_1.default.permissions.findFirst({
+                    where: { id: permissionId },
+                });
+                if (!permissions)
+                    return response_service_1.httpResponse.http400("Error in deleted");
+                yield prisma_1.default.permissions.delete({ where: { id: permissionId } });
+                return response_service_1.httpResponse.http200("Medical rest deleted");
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
 }
 exports.permissionService = new PermissionService();

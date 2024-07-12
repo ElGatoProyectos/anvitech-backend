@@ -97,9 +97,10 @@ class WorkerController {
                 }
                 try {
                     const serviceResponse = yield worker_service_1.workerService.fileToRegisterMassive(file);
-                    response.status(200).json(serviceResponse);
+                    response.status(serviceResponse.statusCode).json(serviceResponse);
                 }
                 catch (error) {
+                    console.log(error);
                     response.status(500).json(error);
                 }
             }));

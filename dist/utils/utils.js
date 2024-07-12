@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cronStart = void 0;
+const prisma_1 = __importDefault(require("../prisma"));
 const data_service_1 = require("../service/data.service");
 const node_cron_1 = __importDefault(require("node-cron"));
 function cronStart() {
@@ -31,8 +32,15 @@ function cronStart() {
                 const month = previousDayDate.getMonth() + 1;
                 const year = previousDayDate.getFullYear();
                 const currentHour = new Date(limaTime).getHours();
+                // validamos si existen registros para esa fecha
+                const newDateFormat = year + "-" + month + "-" + dayOfMonth + " 05:00:00.000";
                 if (currentHour === 5) {
-                    yield data_service_1.dataService.instanceDataInit(dayOfMonth, dayOfMonth, year, month, true);
+                    const response = yield prisma_1.default.detailReport.findMany({
+                        where: { fecha_reporte: newDateFormat },
+                    });
+                    if (response.length === 0) {
+                        yield data_service_1.dataService.instanceDataInit(dayOfMonth, dayOfMonth, year, month, true);
+                    }
                 }
             }
         }
