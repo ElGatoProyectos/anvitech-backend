@@ -228,8 +228,16 @@ class DataService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 //- traemos el horario ====================================================
+                let schedule;
                 const responseSchedule = yield schedule_service_1.scheduleService.findScheduleForWorker(worker.id);
-                const schedule = responseSchedule.content;
+                if (!responseSchedule.ok) {
+                    yield schedule_service_1.scheduleService.createScheduleDefault(worker.id);
+                    const response = yield schedule_service_1.scheduleService.findScheduleForWorker(worker.id);
+                    schedule = response.content;
+                }
+                else {
+                    schedule = responseSchedule.content;
+                }
                 //- definimos las horas del horario ====================================================
                 const [lunesStart, lunesEnd] = schedule.lunes.split("-");
                 // ! corregir esto

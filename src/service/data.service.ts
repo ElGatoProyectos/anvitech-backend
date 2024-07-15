@@ -317,10 +317,21 @@ class DataService {
   ) {
     try {
       //- traemos el horario ====================================================
+
+      let schedule;
       const responseSchedule = await scheduleService.findScheduleForWorker(
         worker.id
       );
-      const schedule = responseSchedule.content;
+
+      if (!responseSchedule.ok) {
+        await scheduleService.createScheduleDefault(worker.id);
+
+        const response = await scheduleService.findScheduleForWorker(worker.id);
+        schedule = response.content;
+      } else {
+        schedule = responseSchedule.content;
+      }
+
       //- definimos las horas del horario ====================================================
 
       const [lunesStart, lunesEnd] = schedule.lunes.split("-");
