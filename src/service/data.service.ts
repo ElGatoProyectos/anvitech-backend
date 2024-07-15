@@ -517,6 +517,12 @@ class DataService {
         },
       });
 
+      if (dataDayForWorker.length < 4) {
+        formatData.falta = "si";
+        formatData.tardanza = "no";
+        formatData.discount = 35;
+      }
+
       if (
         vacationResponse.length > 0 ||
         permissionResponse.length > 0 ||
@@ -527,12 +533,6 @@ class DataService {
         formatData.falta = "no";
         formatData.tardanza = "no";
         formatData.discount = 0;
-      }
-
-      if (dataDayForWorker.length < 4) {
-        formatData.falta = "si";
-        formatData.tardanza = "no";
-        formatData.discount = 35;
       }
 
       await prisma.detailReport.create({ data: formatData });
@@ -741,6 +741,12 @@ class DataService {
         },
       });
 
+      if (dataDayForWorker.length < 4) {
+        formatData.falta = "si";
+        formatData.tardanza = "no";
+        formatData.discount = 35;
+      }
+
       if (
         vacationResponse.length > 0 ||
         permissionResponse.length > 0 ||
@@ -751,12 +757,6 @@ class DataService {
         formatData.falta = "no";
         formatData.tardanza = "no";
         formatData.discount = 0;
-      }
-
-      if (dataDayForWorker.length < 4) {
-        formatData.falta = "si";
-        formatData.tardanza = "no";
-        formatData.discount = 35;
       }
 
       return formatData;

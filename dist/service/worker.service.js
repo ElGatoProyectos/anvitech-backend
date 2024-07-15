@@ -457,7 +457,9 @@ class WorkerService {
     findSupervisors() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const workers = yield prisma_1.default.worker.findMany();
+                const workers = yield prisma_1.default.worker.findMany({
+                    where: { type_contract: "SUPERVISOR" },
+                });
                 yield prisma_1.default.$disconnect();
                 return response_service_1.httpResponse.http200("All workers", workers);
             }

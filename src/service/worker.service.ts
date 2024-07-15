@@ -449,7 +449,9 @@ class WorkerService {
 
   async findSupervisors() {
     try {
-      const workers = await prisma.worker.findMany();
+      const workers = await prisma.worker.findMany({
+        where: { type_contract: "SUPERVISOR" },
+      });
       await prisma.$disconnect();
       return httpResponse.http200("All workers", workers);
     } catch (error) {
