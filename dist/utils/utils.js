@@ -33,7 +33,7 @@ function cronStart() {
                 const year = previousDayDate.getFullYear();
                 const currentHour = new Date(limaTime).getHours();
                 // validamos si existen registros para esa fecha
-                const newDateFormat = year + "-" + month + "-" + dayOfMonth + " 05:00:00.000";
+                const newDateFormat = `${year} + "-" + ${month} + "-" + ${dayOfMonth} + " 05:00:00.000"`;
                 if (currentHour === 5) {
                     const response = yield prisma_1.default.detailReport.findMany({
                         where: { fecha_reporte: newDateFormat },
