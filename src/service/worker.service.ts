@@ -22,6 +22,19 @@ class WorkerService {
     }
   }
 
+  async findAllNoDisable() {
+    try {
+      const workers = await prisma.worker.findMany({
+        where: { enabled: "si" },
+      });
+      await prisma.$disconnect();
+      return httpResponse.http200("All workers", workers);
+    } catch (error) {
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
   async findById(id: number) {
     try {
       const worker = await prisma.worker.findFirst({ where: { id } });

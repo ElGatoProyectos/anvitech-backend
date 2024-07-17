@@ -212,7 +212,21 @@ class DataService {
                             yield this.newMethodRegisterReport(responseNewWorker.content, rowState, dayString, report, day, selectedMonth, selectedYear);
                         }
                     }));
+                    // nuevo
+                    const newWorkers = yield worker_service_1.workerService.findAllNoDisable();
+                    yield prisma_1.default.$disconnect();
+                    const workersDniPending = [];
+                    for (const worker of newWorkers.content) {
+                        if (!processedWorknos.has(worker.dni)) {
+                            workersDniPending.push(worker);
+                        }
+                    }
+                    const dayPromises2 = workersDniPending.map((item) => __awaiter(this, void 0, void 0, function* () {
+                        yield this.newMethodRegisterReport(item, [], dayString, report, day, selectedMonth, selectedYear);
+                    }));
                     promises.push(Promise.allSettled(dayPromises));
+                    //termina nuevo
+                    promises.push(Promise.allSettled(dayPromises2));
                 }
                 Promise.allSettled(promises.flat()).then(() => {
                     return response_service_1.httpResponse.http200("report executed");
@@ -329,7 +343,12 @@ class DataService {
                 }
                 // ========================================================= caso de vacaciones y permisos =============================================================
                 const dateYesterday = new Date();
-                dateYesterday.setDate(dateYesterday.getDate() - 1);
+                dateYesterday.setDate(dateYesterday.getDate() - 2);
+                const datePost = new Date();
+                datePost.setDate(datePost.getDate() + 1);
+                //nuevo
+                dateYesterday.setHours(0, 0, 0, 0);
+                datePost.setHours(0, 0, 0, 0);
                 //- validamos si esta de vacaciones, permiso, licencia o descanso medico
                 // validamos las vacaciones
                 const vacationResponse = yield prisma_1.default.vacation.findMany({
@@ -338,7 +357,7 @@ class DataService {
                         AND: [
                             {
                                 start_date: {
-                                    lte: dateYesterday,
+                                    lte: datePost,
                                 },
                             },
                             {

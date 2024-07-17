@@ -69,6 +69,21 @@ class WorkerService {
             }
         });
     }
+    findAllNoDisable() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const workers = yield prisma_1.default.worker.findMany({
+                    where: { enabled: "si" },
+                });
+                yield prisma_1.default.$disconnect();
+                return response_service_1.httpResponse.http200("All workers", workers);
+            }
+            catch (error) {
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
