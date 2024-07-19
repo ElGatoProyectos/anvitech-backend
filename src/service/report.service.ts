@@ -70,7 +70,7 @@ class ReportService {
           },
         },
       });
-      return httpResponse.http200("Report", report);
+      return httpResponse.http200("Report", { report, worker });
     } catch (error) {
       return errorService.handleErrorSchema(error);
     }

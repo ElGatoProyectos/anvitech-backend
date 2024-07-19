@@ -107,7 +107,7 @@ class ReportService {
                         },
                     },
                 });
-                return response_service_1.httpResponse.http200("Report", report);
+                return response_service_1.httpResponse.http200("Report", { report, worker });
             }
             catch (error) {
                 return errors_service_1.errorService.handleErrorSchema(error);
