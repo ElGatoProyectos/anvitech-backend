@@ -86,6 +86,34 @@ class ReportService {
             }
         });
     }
+    generateReportForWorker(data, dni) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const worker = yield prisma_1.default.worker.findFirst({ where: { dni } });
+                if (!worker)
+                    return response_service_1.httpResponse.http404("worker not found");
+                const { start, end } = data;
+                const start_date_prev = new Date(start);
+                start_date_prev.setDate(start_date_prev.getDate());
+                const end_date_prev = new Date(end);
+                end_date_prev.setDate(end_date_prev.getDate() + 1);
+                // Buscar registros en el rango de fechas
+                const report = yield prisma_1.default.detailReport.findMany({
+                    where: {
+                        dni,
+                        fecha_reporte: {
+                            gte: start_date_prev,
+                            lte: end_date_prev,
+                        },
+                    },
+                });
+                return response_service_1.httpResponse.http200("Report", report);
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
     findById(reportId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -1053,6 +1081,15 @@ class ReportService {
     }
     validateDayInWorker(fecha_excel, workerId) {
         return __awaiter(this, void 0, void 0, function* () {
+            // tenemos que transformar la fecha como en el data service
+            // esto pendiente hasta que se presente el bug
+            // const dateYesterday = new Date(fecha_excel);
+            // dateYesterday.setDate(dateYesterday.getDate() - 1);
+            // const datePost = new Date();
+            // datePost.setDate(datePost.getDate());
+            // dateYesterday.setHours(0, 0, 0, 0);
+            // datePost.setHours(0, 0, 0, 0);
+            // fecha_excel.setHours(0, 0, 0, 0);
             const incidentResponse = yield prisma_1.default.incident.findMany({
                 where: {
                     date: fecha_excel,

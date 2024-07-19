@@ -47,6 +47,30 @@ class WorkerService {
     }
   }
 
+  async deleteById(id: number) {
+    try {
+      const worker = await prisma.worker.findFirst({ where: { id } });
+
+      if (!worker) return httpResponse.http404("Worker not found");
+
+      await prisma.schedule.delete({ where: { worker_id: id } });
+      await prisma.detailReport.deleteMany({ where: { dni: worker.dni } });
+      await prisma.vacation.deleteMany({ where: { worker_id: worker.id } });
+      await prisma.licence.deleteMany({ where: { worker_id: worker.id } });
+      await prisma.medicalRest.deleteMany({ where: { worker_id: worker.id } });
+      await prisma.permissions.deleteMany({ where: { worker_id: worker.id } });
+
+      await prisma.worker.delete({ where: { id } });
+
+      await prisma.$disconnect();
+      return httpResponse.http200("Worker deleted", worker);
+    } catch (error) {
+      console.log(error);
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
   /// registros masivos ok, deben evitarse ingresar registros duplicados en el excel si no ninguno se registrara
   async fileToRegisterMassive(file: any) {
     try {
@@ -197,6 +221,17 @@ class WorkerService {
             reason: data.reason,
             enabled: "no",
           },
+        });
+
+        const formatDate = new Date(data.termination_date);
+        formatDate.setHours(0, 0, 0, 0);
+
+        const nextDay = new Date(formatDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        // borra datos del mismo dia
+        await prisma.detailReport.deleteMany({
+          where: { dni: worker.dni, fecha_reporte: { gte: nextDay } },
         });
         await prisma.$disconnect();
         return httpResponse.http200("Worker updated", worker);

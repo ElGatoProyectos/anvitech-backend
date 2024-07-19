@@ -45,6 +45,20 @@ class ReportController {
         });
     }
     //todo used
+    reportForWorkerDNIPost(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const dni = request.params.dni;
+                const data = request.body;
+                const responseReports = yield report_service_1.reportService.generateReportForWorker(data, dni);
+                response.status(responseReports.statusCode).json(responseReports.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    //todo used
     reportIdGet(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

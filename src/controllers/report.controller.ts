@@ -29,6 +29,24 @@ class ReportController {
   }
 
   //todo used
+  async reportForWorkerDNIPost(
+    request: Request,
+    response: Response
+  ): Promise<void> {
+    try {
+      const dni = request.params.dni;
+      const data = request.body;
+      const responseReports = await reportService.generateReportForWorker(
+        data,
+        dni
+      );
+      response.status(responseReports.statusCode).json(responseReports.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  //todo used
   async reportIdGet(request: Request, response: Response): Promise<void> {
     try {
       const id = Number(request.params.id);

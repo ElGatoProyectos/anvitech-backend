@@ -36,7 +36,20 @@ class WorkerController {
   async workerIdGet(request: Request, response: Response): Promise<void> {
     try {
       const id = Number(request.params.id);
+
       const serviceResponse = await workerService.findById(id);
+
+      response.status(serviceResponse.statusCode).json(serviceResponse.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  async workerIdDelete(request: Request, response: Response): Promise<void> {
+    try {
+      const id = Number(request.params.id);
+
+      const serviceResponse = await workerService.deleteById(id);
 
       response.status(serviceResponse.statusCode).json(serviceResponse.content);
     } catch (error) {
@@ -89,7 +102,6 @@ class WorkerController {
 
         response.status(serviceResponse.statusCode).json(serviceResponse);
       } catch (error) {
-        console.log(error);
         response.status(500).json(error);
       }
     });

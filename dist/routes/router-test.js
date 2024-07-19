@@ -48,11 +48,11 @@ router.post("/reports/upload", report_controller_1.reportController.reportUpload
 router.post("/reports/upload-update", report_controller_1.reportController.reportUploadUpdatePost);
 router.post("/reports/weekly", report_controller_1.reportController.reportWeeklyPost);
 // Schedule routes
+router.get("/schedule/worker/:id", schedule_controller_1.scheduleController.scheduleWorkerIdGet);
 router.post("/schedule/massive-schedule", schedule_controller_1.scheduleController.scheduleMassiveSchedulePost);
 router.get("/schedule/type", schedule_controller_1.scheduleController.scheduleTypeGet);
 router.post("/schedule/type", schedule_controller_1.scheduleController.scheduleTypePost);
 router.put("/schedule/type/:id", schedule_controller_1.scheduleController.scheduleTypeIdPut);
-router.get("/schedule/worker/:id", schedule_controller_1.scheduleController.scheduleWorkerIdGet);
 // Terminations routes
 router.put("/terminations/:id", termination_controller_1.terminationController.terminationIdPut);
 // Test routes
@@ -76,6 +76,8 @@ router.get("/workers/departments", workers_controller_1.workerController.workerD
 router.get("/workers/schedule", workers_controller_1.workerController.workerScheduleGet);
 router.post("/schedule", schedule_controller_1.scheduleController.schedulePost);
 router.get("/workers/:id", workers_controller_1.workerController.workerIdGet);
+// add delete worker
+router.delete("/workers/:id", workers_controller_1.workerController.workerIdDelete);
 router.put("/workers/:id", workers_controller_1.workerController.workerIdPut);
 router.post("/workers/file", workers_controller_1.workerController.workerFilePost);
 router.post("/workers/licences", workers_controller_1.workerController.workerLicencesPost);
@@ -102,6 +104,8 @@ router.post("/admin", controller_1.controller.createAdmin);
 router.get("/incidents", controller_1.controller.incidentGet);
 router.post("/incidents", controller_1.controller.incidentPost);
 router.get("/reports", report_controller_1.reportController.reportGet);
+// reporte por trabajador
+router.post("/reports/worker/:dni", report_controller_1.reportController.reportForWorkerDNIPost);
 router.post("/reports", report_controller_1.reportController.reportPost);
 router.get("/terminations", termination_controller_1.terminationController.terminationsGet);
 router.post("/terminations", termination_controller_1.terminationController.terminationsPost);

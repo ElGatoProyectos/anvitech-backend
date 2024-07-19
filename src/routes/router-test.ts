@@ -56,6 +56,8 @@ router.post("/reports/upload-update", reportController.reportUploadUpdatePost);
 router.post("/reports/weekly", reportController.reportWeeklyPost);
 
 // Schedule routes
+router.get("/schedule/worker/:id", scheduleController.scheduleWorkerIdGet);
+
 router.post(
   "/schedule/massive-schedule",
   scheduleController.scheduleMassiveSchedulePost
@@ -63,7 +65,6 @@ router.post(
 router.get("/schedule/type", scheduleController.scheduleTypeGet);
 router.post("/schedule/type", scheduleController.scheduleTypePost);
 router.put("/schedule/type/:id", scheduleController.scheduleTypeIdPut);
-router.get("/schedule/worker/:id", scheduleController.scheduleWorkerIdGet);
 
 // Terminations routes
 router.put("/terminations/:id", terminationController.terminationIdPut);
@@ -94,6 +95,9 @@ router.get("/workers/schedule", workerController.workerScheduleGet);
 router.post("/schedule", scheduleController.schedulePost);
 
 router.get("/workers/:id", workerController.workerIdGet);
+// add delete worker
+router.delete("/workers/:id", workerController.workerIdDelete);
+
 router.put("/workers/:id", workerController.workerIdPut);
 router.post("/workers/file", workerController.workerFilePost);
 router.post("/workers/licences", workerController.workerLicencesPost);
@@ -150,6 +154,9 @@ router.post("/admin", controller.createAdmin);
 router.get("/incidents", controller.incidentGet);
 router.post("/incidents", controller.incidentPost);
 router.get("/reports", reportController.reportGet);
+// reporte por trabajador
+router.post("/reports/worker/:dni", reportController.reportForWorkerDNIPost);
+
 router.post("/reports", reportController.reportPost);
 router.get("/terminations", terminationController.terminationsGet);
 router.post("/terminations", terminationController.terminationsPost);

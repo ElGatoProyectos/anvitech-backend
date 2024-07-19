@@ -59,6 +59,18 @@ class WorkerController {
             }
         });
     }
+    workerIdDelete(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = Number(request.params.id);
+                const serviceResponse = yield worker_service_1.workerService.deleteById(id);
+                response.status(serviceResponse.statusCode).json(serviceResponse.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
     // PUT method for updating a worker by ID
     workerIdPut(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -100,7 +112,6 @@ class WorkerController {
                     response.status(serviceResponse.statusCode).json(serviceResponse);
                 }
                 catch (error) {
-                    console.log(error);
                     response.status(500).json(error);
                 }
             }));

@@ -99,6 +99,29 @@ class WorkerService {
             }
         });
     }
+    deleteById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const worker = yield prisma_1.default.worker.findFirst({ where: { id } });
+                if (!worker)
+                    return response_service_1.httpResponse.http404("Worker not found");
+                yield prisma_1.default.schedule.delete({ where: { worker_id: id } });
+                yield prisma_1.default.detailReport.deleteMany({ where: { dni: worker.dni } });
+                yield prisma_1.default.vacation.deleteMany({ where: { worker_id: worker.id } });
+                yield prisma_1.default.licence.deleteMany({ where: { worker_id: worker.id } });
+                yield prisma_1.default.medicalRest.deleteMany({ where: { worker_id: worker.id } });
+                yield prisma_1.default.permissions.deleteMany({ where: { worker_id: worker.id } });
+                yield prisma_1.default.worker.delete({ where: { id } });
+                yield prisma_1.default.$disconnect();
+                return response_service_1.httpResponse.http200("Worker deleted", worker);
+            }
+            catch (error) {
+                console.log(error);
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
     /// registros masivos ok, deben evitarse ingresar registros duplicados en el excel si no ninguno se registrara
     fileToRegisterMassive(file) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -241,6 +264,14 @@ class WorkerService {
                             reason: data.reason,
                             enabled: "no",
                         },
+                    });
+                    const formatDate = new Date(data.termination_date);
+                    formatDate.setHours(0, 0, 0, 0);
+                    const nextDay = new Date(formatDate);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    // borra datos del mismo dia
+                    yield prisma_1.default.detailReport.deleteMany({
+                        where: { dni: worker.dni, fecha_reporte: { gte: nextDay } },
                     });
                     yield prisma_1.default.$disconnect();
                     return response_service_1.httpResponse.http200("Worker updated", worker);
