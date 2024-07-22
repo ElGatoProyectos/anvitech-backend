@@ -207,6 +207,26 @@ class ReportController {
     }
   }
 
+  //new for use
+  async newReportExportStarsoftPost(
+    request: Request,
+    response: Response
+  ): Promise<void> {
+    try {
+      const body = request.body;
+      const { month } = body;
+      const year = new Date().getFullYear();
+
+      const responseData = await reportService.newDataForStartSoft(
+        Number(month),
+        year
+      );
+      response.status(responseData.statusCode).json(responseData.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
   //todo used
   async reportIncidentPost(
     request: Request,

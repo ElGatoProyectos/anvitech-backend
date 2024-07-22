@@ -365,9 +365,143 @@ class ReportService {
           return formatData;
         })
       );
+
+      const incidents = await prisma.incident.findMany({
+        where: { date: { gte: startDate, lt: endDate } },
+      });
       await prisma.$disconnect();
 
       return httpResponse.http200("Report success", dataGeneral);
+    } catch (error) {
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  async newDataForStartSoft(month: number, year: number) {
+    try {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 1);
+
+      const responseWorkers = await workerService.findAll();
+      await prisma.$disconnect();
+
+      const dataGeneral = await Promise.all(
+        await responseWorkers.content.map(async (worker: any) => {
+          const responseVacations = await prisma.vacation.findMany({
+            where: {
+              worker_id: worker.id,
+              AND: [
+                {
+                  start_date: {
+                    lte: endDate,
+                  },
+                },
+                {
+                  end_date: {
+                    gte: startDate,
+                  },
+                },
+              ],
+            },
+          });
+          await prisma.$disconnect();
+
+          const responsePermission = await prisma.permissions.findMany({
+            where: {
+              worker_id: worker.id,
+              AND: [
+                {
+                  start_date: {
+                    lte: endDate,
+                  },
+                },
+                {
+                  end_date: {
+                    gte: startDate,
+                  },
+                },
+              ],
+            },
+          });
+          await prisma.$disconnect();
+
+          const responseMedicalRest = await prisma.medicalRest.findMany({
+            where: {
+              worker_id: worker.id,
+              AND: [
+                {
+                  start_date: {
+                    lte: endDate,
+                  },
+                },
+                {
+                  end_date: {
+                    gte: startDate,
+                  },
+                },
+              ],
+            },
+          });
+          await prisma.$disconnect();
+
+          const responseLicenses = await prisma.licence.findMany({
+            where: {
+              worker_id: worker.id,
+              AND: [
+                {
+                  start_date: {
+                    lte: endDate,
+                  },
+                },
+                {
+                  end_date: {
+                    gte: startDate,
+                  },
+                },
+              ],
+            },
+          });
+          await prisma.$disconnect();
+
+          const responseReports = await prisma.detailReport.findMany({
+            where: {
+              dni: worker.dni,
+              AND: [
+                {
+                  fecha_reporte: {
+                    lte: endDate,
+                  },
+                },
+                {
+                  fecha_reporte: {
+                    gte: startDate,
+                  },
+                },
+              ],
+            },
+          });
+          await prisma.$disconnect();
+
+          const formatData = {
+            worker,
+            reportes: responseReports,
+            vacaciones: responseVacations,
+            descansos_medico: responseMedicalRest,
+            licencias: responseLicenses,
+            permisos: responsePermission,
+          };
+
+          return formatData;
+        })
+      );
+
+      const incidents = await prisma.incident.findMany({
+        where: { date: { gte: startDate, lt: endDate } },
+      });
+      await prisma.$disconnect();
+
+      return httpResponse.http200("Report success", { dataGeneral, incidents });
     } catch (error) {
       await prisma.$disconnect();
       return errorService.handleErrorSchema(error);

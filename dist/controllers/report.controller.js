@@ -186,6 +186,21 @@ class ReportController {
             }
         });
     }
+    //new for use
+    newReportExportStarsoftPost(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const { month } = body;
+                const year = new Date().getFullYear();
+                const responseData = yield report_service_1.reportService.newDataForStartSoft(Number(month), year);
+                response.status(responseData.statusCode).json(responseData.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
     //todo used
     reportIncidentPost(request, response) {
         return __awaiter(this, void 0, void 0, function* () {

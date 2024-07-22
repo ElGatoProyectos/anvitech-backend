@@ -545,9 +545,15 @@ class DataService {
 
       // validamos incidencias
 
+      const newDateForIncident = new Date(dateYesterday);
+      newDateForIncident.setDate(newDateForIncident.getDate() + 1);
+
       const incidentResponse = await prisma.incident.findMany({
         where: {
-          date: dateYesterday,
+          date: {
+            lte: datePost,
+            gte: dateYesterday,
+          },
         },
       });
 

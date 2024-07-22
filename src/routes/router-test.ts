@@ -18,7 +18,7 @@ router.put("/detail-report/:id", controller.detailReportPut);
 
 // Incidents routes
 router.get("/incidents/:id", controller.incidentGetId);
-router.put("/incidents/:id", controller.incidentPutId);
+router.get("/incidents/:id", controller.incidentGetId);
 
 // Permissions routes
 router.post("/permissions", controller.permissionPost);
@@ -48,6 +48,13 @@ router.post(
   "/reports/export/starsoft",
   reportController.reportExportStarsoftPost
 );
+
+// new method report new startsoft
+router.post(
+  "/reports/export/new-starsoft",
+  reportController.newReportExportStarsoftPost
+);
+
 router.post("/reports/incident", reportController.reportIncidentPost);
 router.get("/reports/incident/:id", reportController.reportIncidentIdGet);
 router.delete("/reports/incident/:id", reportController.reportIncidentIdDelete);
@@ -102,6 +109,7 @@ router.put("/workers/:id", workerController.workerIdPut);
 router.post("/workers/file", workerController.workerFilePost);
 router.post("/workers/licences", workerController.workerLicencesPost);
 router.get("/workers/licences/:id", workerController.workerLicenceIdGet);
+
 router.post("/workers/licences/file", workerController.workerLicenceFilePost);
 router.get("/workers/licences/min/:id", workerController.workerLicenceMinIdGet);
 router.post(

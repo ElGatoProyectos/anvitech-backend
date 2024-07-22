@@ -19,7 +19,7 @@ router.post("/reports/generate/day", report_controller_1.reportController.report
 router.put("/detail-report/:id", controller_1.controller.detailReportPut);
 // Incidents routes
 router.get("/incidents/:id", controller_1.controller.incidentGetId);
-router.put("/incidents/:id", controller_1.controller.incidentPutId);
+router.get("/incidents/:id", controller_1.controller.incidentGetId);
 // Permissions routes
 router.post("/permissions", controller_1.controller.permissionPost);
 router.put("/permissions/:id", controller_1.controller.permissionIdPut);
@@ -41,6 +41,8 @@ router.put("/reports/detail/:id", report_controller_1.reportController.reportDet
 router.delete("/reports/detail/:id", report_controller_1.reportController.reportDetailDelete);
 router.post("/reports/export", report_controller_1.reportController.reportExportPost);
 router.post("/reports/export/starsoft", report_controller_1.reportController.reportExportStarsoftPost);
+// new method report new startsoft
+router.post("/reports/export/new-starsoft", report_controller_1.reportController.newReportExportStarsoftPost);
 router.post("/reports/incident", report_controller_1.reportController.reportIncidentPost);
 router.get("/reports/incident/:id", report_controller_1.reportController.reportIncidentIdGet);
 router.delete("/reports/incident/:id", report_controller_1.reportController.reportIncidentIdDelete);

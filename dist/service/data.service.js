@@ -423,9 +423,14 @@ class DataService {
                     },
                 });
                 // validamos incidencias
+                const newDateForIncident = new Date(dateYesterday);
+                newDateForIncident.setDate(newDateForIncident.getDate() + 1);
                 const incidentResponse = yield prisma_1.default.incident.findMany({
                     where: {
-                        date: dateYesterday,
+                        date: {
+                            lte: datePost,
+                            gte: dateYesterday,
+                        },
                     },
                 });
                 if (dataDayForWorker.length < 4) {

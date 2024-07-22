@@ -393,8 +393,131 @@ class ReportService {
                     };
                     return formatData;
                 })));
+                const incidents = yield prisma_1.default.incident.findMany({
+                    where: { date: { gte: startDate, lt: endDate } },
+                });
                 yield prisma_1.default.$disconnect();
                 return response_service_1.httpResponse.http200("Report success", dataGeneral);
+            }
+            catch (error) {
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    newDataForStartSoft(month, year) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const startDate = new Date(year, month - 1, 1);
+                const endDate = new Date(year, month, 1);
+                const responseWorkers = yield worker_service_1.workerService.findAll();
+                yield prisma_1.default.$disconnect();
+                const dataGeneral = yield Promise.all(yield responseWorkers.content.map((worker) => __awaiter(this, void 0, void 0, function* () {
+                    const responseVacations = yield prisma_1.default.vacation.findMany({
+                        where: {
+                            worker_id: worker.id,
+                            AND: [
+                                {
+                                    start_date: {
+                                        lte: endDate,
+                                    },
+                                },
+                                {
+                                    end_date: {
+                                        gte: startDate,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                    yield prisma_1.default.$disconnect();
+                    const responsePermission = yield prisma_1.default.permissions.findMany({
+                        where: {
+                            worker_id: worker.id,
+                            AND: [
+                                {
+                                    start_date: {
+                                        lte: endDate,
+                                    },
+                                },
+                                {
+                                    end_date: {
+                                        gte: startDate,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                    yield prisma_1.default.$disconnect();
+                    const responseMedicalRest = yield prisma_1.default.medicalRest.findMany({
+                        where: {
+                            worker_id: worker.id,
+                            AND: [
+                                {
+                                    start_date: {
+                                        lte: endDate,
+                                    },
+                                },
+                                {
+                                    end_date: {
+                                        gte: startDate,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                    yield prisma_1.default.$disconnect();
+                    const responseLicenses = yield prisma_1.default.licence.findMany({
+                        where: {
+                            worker_id: worker.id,
+                            AND: [
+                                {
+                                    start_date: {
+                                        lte: endDate,
+                                    },
+                                },
+                                {
+                                    end_date: {
+                                        gte: startDate,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                    yield prisma_1.default.$disconnect();
+                    const responseReports = yield prisma_1.default.detailReport.findMany({
+                        where: {
+                            dni: worker.dni,
+                            AND: [
+                                {
+                                    fecha_reporte: {
+                                        lte: endDate,
+                                    },
+                                },
+                                {
+                                    fecha_reporte: {
+                                        gte: startDate,
+                                    },
+                                },
+                            ],
+                        },
+                    });
+                    yield prisma_1.default.$disconnect();
+                    const formatData = {
+                        worker,
+                        reportes: responseReports,
+                        vacaciones: responseVacations,
+                        descansos_medico: responseMedicalRest,
+                        licencias: responseLicenses,
+                        permisos: responsePermission,
+                    };
+                    return formatData;
+                })));
+                const incidents = yield prisma_1.default.incident.findMany({
+                    where: { date: { gte: startDate, lt: endDate } },
+                });
+                yield prisma_1.default.$disconnect();
+                return response_service_1.httpResponse.http200("Report success", { dataGeneral, incidents });
             }
             catch (error) {
                 yield prisma_1.default.$disconnect();
