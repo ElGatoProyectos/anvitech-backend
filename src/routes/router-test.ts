@@ -55,6 +55,16 @@ router.post(
   reportController.newReportExportStarsoftPost
 );
 
+router.post(
+  "/reports/export/new-report-worker",
+  reportController.newReportForWorker
+);
+
+router.post(
+  "/reports/export/new-model-report",
+  reportController.newModelReport
+);
+
 router.post("/reports/incident", reportController.reportIncidentPost);
 router.get("/reports/incident/:id", reportController.reportIncidentIdGet);
 router.delete("/reports/incident/:id", reportController.reportIncidentIdDelete);

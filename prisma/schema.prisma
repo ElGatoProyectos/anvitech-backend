@@ -54,10 +54,12 @@ model DetailReport {
   reason_license         String?
   discount               Float?
   worker_status          String?
-  report                 Report                 @relation(fields: [report_id], references: [id])
-  DetailReportIncident   DetailReportIncident[]
-  Incident               Incident?              @relation(fields: [incidentId], references: [id])
-  incidentId             Int?
+  extra_hours            String?  @default("n")
+
+  report               Report                 @relation(fields: [report_id], references: [id])
+  DetailReportIncident DetailReportIncident[]
+  Incident             Incident?              @relation(fields: [incidentId], references: [id])
+  incidentId           Int?
 }
 
 model Worker {

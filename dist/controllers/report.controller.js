@@ -201,6 +201,34 @@ class ReportController {
             }
         });
     }
+    // v2
+    newReportForWorker(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const { workerSelected, dateSelected } = body;
+                const responseData = yield report_service_1.reportService.newFormatForWorker(workerSelected, dateSelected);
+                response.status(responseData.statusCode).json(responseData.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
+    // v2
+    newModelReport(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const body = request.body;
+                const { dateSelected } = body;
+                const responseData = yield report_service_1.reportService.newModelForReport(dateSelected);
+                response.status(responseData.statusCode).json(responseData.content);
+            }
+            catch (error) {
+                response.status(500).json(error);
+            }
+        });
+    }
     //todo used
     reportIncidentPost(request, response) {
         return __awaiter(this, void 0, void 0, function* () {

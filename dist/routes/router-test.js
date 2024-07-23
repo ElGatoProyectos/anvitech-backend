@@ -43,6 +43,8 @@ router.post("/reports/export", report_controller_1.reportController.reportExport
 router.post("/reports/export/starsoft", report_controller_1.reportController.reportExportStarsoftPost);
 // new method report new startsoft
 router.post("/reports/export/new-starsoft", report_controller_1.reportController.newReportExportStarsoftPost);
+router.post("/reports/export/new-report-worker", report_controller_1.reportController.newReportForWorker);
+router.post("/reports/export/new-model-report", report_controller_1.reportController.newModelReport);
 router.post("/reports/incident", report_controller_1.reportController.reportIncidentPost);
 router.get("/reports/incident/:id", report_controller_1.reportController.reportIncidentIdGet);
 router.delete("/reports/incident/:id", report_controller_1.reportController.reportIncidentIdDelete);

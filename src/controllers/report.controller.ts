@@ -227,6 +227,37 @@ class ReportController {
     }
   }
 
+  // v2
+
+  async newReportForWorker(request: Request, response: Response) {
+    try {
+      const body = request.body;
+      const { workerSelected, dateSelected } = body;
+
+      const responseData = await reportService.newFormatForWorker(
+        workerSelected,
+        dateSelected
+      );
+      response.status(responseData.statusCode).json(responseData.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
+  // v2
+
+  async newModelReport(request: Request, response: Response) {
+    try {
+      const body = request.body;
+      const { dateSelected } = body;
+
+      const responseData = await reportService.newModelForReport(dateSelected);
+      response.status(responseData.statusCode).json(responseData.content);
+    } catch (error) {
+      response.status(500).json(error);
+    }
+  }
+
   //todo used
   async reportIncidentPost(
     request: Request,

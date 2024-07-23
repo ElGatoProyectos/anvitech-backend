@@ -275,6 +275,21 @@ class ReportService {
             saturday: endDate,
         };
     }
+    getMondayAndSaturdayDatesWParmas(dateString) {
+        const [year, month, day] = dateString.split("-").map(Number); // YYYY-MM-DD format
+        const inputDate = new Date(Date.UTC(year, month - 1, day)); // Use UTC to avoid timezone issues
+        const dayOfWeek = inputDate.getUTCDay(); // Use getUTCDay() for consistency
+        const startDate = new Date(inputDate);
+        const endDate = new Date(inputDate);
+        const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+        startDate.setUTCDate(startDate.getUTCDate() + diffToMonday); // Use setUTCDate
+        const diffToSaturday = 6 - dayOfWeek;
+        endDate.setUTCDate(endDate.getUTCDate() + diffToSaturday); // Use setUTCDate
+        return {
+            startDate,
+            endDate,
+        };
+    }
     //ok
     dataForStartSoft(month, year) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -405,6 +420,7 @@ class ReportService {
             }
         });
     }
+    // v2
     newDataForStartSoft(month, year) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -413,6 +429,9 @@ class ReportService {
                 const responseWorkers = yield worker_service_1.workerService.findAll();
                 yield prisma_1.default.$disconnect();
                 const dataGeneral = yield Promise.all(yield responseWorkers.content.map((worker) => __awaiter(this, void 0, void 0, function* () {
+                    const schedule = yield prisma_1.default.schedule.findFirst({
+                        where: { worker_id: worker.id },
+                    });
                     const responseVacations = yield prisma_1.default.vacation.findMany({
                         where: {
                             worker_id: worker.id,
@@ -505,6 +524,7 @@ class ReportService {
                     yield prisma_1.default.$disconnect();
                     const formatData = {
                         worker,
+                        schedule,
                         reportes: responseReports,
                         vacaciones: responseVacations,
                         descansos_medico: responseMedicalRest,
@@ -521,6 +541,127 @@ class ReportService {
             }
             catch (error) {
                 yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    // v2
+    newFormatForWorker(workerSelected, dateSelected) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { start, end } = dateSelected;
+                const startDate = new Date(`${start}T00:00:00`);
+                const endDate = new Date(`${end}T23:59:59`);
+                const reports = yield prisma_1.default.detailReport.findMany({
+                    where: {
+                        fecha_reporte: {
+                            gte: startDate,
+                            lt: endDate,
+                        },
+                        dni: workerSelected.dni,
+                    },
+                });
+                const schedule = yield prisma_1.default.schedule.findFirst({
+                    where: { worker_id: workerSelected.id },
+                });
+                const responseVacations = yield prisma_1.default.vacation.findMany({
+                    where: {
+                        worker_id: workerSelected.id,
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: endDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: startDate,
+                                },
+                            },
+                        ],
+                    },
+                });
+                yield prisma_1.default.$disconnect();
+                const responsePermission = yield prisma_1.default.permissions.findMany({
+                    where: {
+                        worker_id: workerSelected.id,
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: endDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: startDate,
+                                },
+                            },
+                        ],
+                    },
+                });
+                yield prisma_1.default.$disconnect();
+                const responseMedicalRest = yield prisma_1.default.medicalRest.findMany({
+                    where: {
+                        worker_id: workerSelected.id,
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: endDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: startDate,
+                                },
+                            },
+                        ],
+                    },
+                });
+                yield prisma_1.default.$disconnect();
+                const responseLicenses = yield prisma_1.default.licence.findMany({
+                    where: {
+                        worker_id: workerSelected.id,
+                        AND: [
+                            {
+                                start_date: {
+                                    lte: endDate,
+                                },
+                            },
+                            {
+                                end_date: {
+                                    gte: startDate,
+                                },
+                            },
+                        ],
+                    },
+                });
+                yield prisma_1.default.$disconnect();
+                const formatData = {
+                    reportes: reports,
+                    vacaciones: responseVacations,
+                    descansos_medico: responseMedicalRest,
+                    licencias: responseLicenses,
+                    permisos: responsePermission,
+                    schedule,
+                };
+                return response_service_1.httpResponse.http200("Report success", formatData);
+            }
+            catch (error) {
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+        });
+    }
+    // new
+    newModelForReport(dateSelected) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log(dateSelected);
+                const response = this.getMondayAndSaturdayDatesWParmas(dateSelected);
+                console.log(response);
+                return response_service_1.httpResponse.http200("Report success", response);
+            }
+            catch (error) {
                 return errors_service_1.errorService.handleErrorSchema(error);
             }
         });

@@ -237,6 +237,27 @@ class ReportService {
     };
   }
 
+  getMondayAndSaturdayDatesWParmas(dateString: string) {
+    const [year, month, day] = dateString.split("-").map(Number); // YYYY-MM-DD format
+    const inputDate = new Date(Date.UTC(year, month - 1, day)); // Use UTC to avoid timezone issues
+
+    const dayOfWeek = inputDate.getUTCDay(); // Use getUTCDay() for consistency
+
+    const startDate = new Date(inputDate);
+    const endDate = new Date(inputDate);
+
+    const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+    startDate.setUTCDate(startDate.getUTCDate() + diffToMonday); // Use setUTCDate
+
+    const diffToSaturday = 6 - dayOfWeek;
+    endDate.setUTCDate(endDate.getUTCDate() + diffToSaturday); // Use setUTCDate
+
+    return {
+      startDate,
+      endDate,
+    };
+  }
+
   //ok
   async dataForStartSoft(month: number, year: number) {
     try {
@@ -378,6 +399,7 @@ class ReportService {
     }
   }
 
+  // v2
   async newDataForStartSoft(month: number, year: number) {
     try {
       const startDate = new Date(year, month - 1, 1);
@@ -388,6 +410,10 @@ class ReportService {
 
       const dataGeneral = await Promise.all(
         await responseWorkers.content.map(async (worker: any) => {
+          const schedule = await prisma.schedule.findFirst({
+            where: { worker_id: worker.id },
+          });
+
           const responseVacations = await prisma.vacation.findMany({
             where: {
               worker_id: worker.id,
@@ -485,6 +511,7 @@ class ReportService {
 
           const formatData = {
             worker,
+            schedule,
             reportes: responseReports,
             vacaciones: responseVacations,
             descansos_medico: responseMedicalRest,
@@ -504,6 +531,133 @@ class ReportService {
       return httpResponse.http200("Report success", { dataGeneral, incidents });
     } catch (error) {
       await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  // v2
+  async newFormatForWorker(workerSelected: any, dateSelected: any) {
+    try {
+      const { start, end } = dateSelected;
+
+      const startDate = new Date(`${start}T00:00:00`);
+      const endDate = new Date(`${end}T23:59:59`);
+
+      const reports = await prisma.detailReport.findMany({
+        where: {
+          fecha_reporte: {
+            gte: startDate,
+            lt: endDate,
+          },
+          dni: workerSelected.dni,
+        },
+      });
+
+      const schedule = await prisma.schedule.findFirst({
+        where: { worker_id: workerSelected.id },
+      });
+
+      const responseVacations = await prisma.vacation.findMany({
+        where: {
+          worker_id: workerSelected.id,
+          AND: [
+            {
+              start_date: {
+                lte: endDate,
+              },
+            },
+            {
+              end_date: {
+                gte: startDate,
+              },
+            },
+          ],
+        },
+      });
+      await prisma.$disconnect();
+
+      const responsePermission = await prisma.permissions.findMany({
+        where: {
+          worker_id: workerSelected.id,
+          AND: [
+            {
+              start_date: {
+                lte: endDate,
+              },
+            },
+            {
+              end_date: {
+                gte: startDate,
+              },
+            },
+          ],
+        },
+      });
+      await prisma.$disconnect();
+
+      const responseMedicalRest = await prisma.medicalRest.findMany({
+        where: {
+          worker_id: workerSelected.id,
+          AND: [
+            {
+              start_date: {
+                lte: endDate,
+              },
+            },
+            {
+              end_date: {
+                gte: startDate,
+              },
+            },
+          ],
+        },
+      });
+      await prisma.$disconnect();
+
+      const responseLicenses = await prisma.licence.findMany({
+        where: {
+          worker_id: workerSelected.id,
+          AND: [
+            {
+              start_date: {
+                lte: endDate,
+              },
+            },
+            {
+              end_date: {
+                gte: startDate,
+              },
+            },
+          ],
+        },
+      });
+      await prisma.$disconnect();
+
+      const formatData = {
+        reportes: reports,
+        vacaciones: responseVacations,
+        descansos_medico: responseMedicalRest,
+        licencias: responseLicenses,
+        permisos: responsePermission,
+        schedule,
+      };
+
+      return httpResponse.http200("Report success", formatData);
+    } catch (error) {
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
+
+  // new
+  async newModelForReport(dateSelected: any) {
+    try {
+      console.log(dateSelected);
+      const response = this.getMondayAndSaturdayDatesWParmas(dateSelected);
+
+      console.log(response);
+      return httpResponse.http200("Report success", response);
+    } catch (error) {
       return errorService.handleErrorSchema(error);
     }
   }
