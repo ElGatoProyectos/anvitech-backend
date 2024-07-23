@@ -652,11 +652,32 @@ class ReportService {
   // new
   async newModelForReport(dateSelected: any) {
     try {
-      console.log(dateSelected);
-      const response = this.getMondayAndSaturdayDatesWParmas(dateSelected);
+      // console.log(dateSelected);
+      const { startDate, endDate } =
+        this.getMondayAndSaturdayDatesWParmas(dateSelected);
 
-      console.log(response);
-      return httpResponse.http200("Report success", response);
+      const reports = await prisma.detailReport.findMany({
+        where: {
+          fecha_reporte: {
+            gte: startDate,
+            lt: endDate,
+          },
+        },
+      });
+
+      const data = await Promise.all(
+        reports.map(async (item: any) => {
+          const dni = item.dni;
+          const worker = await workerService.findByDNI(dni);
+
+          return {
+            report: item,
+            worker,
+          };
+        })
+      );
+
+      return httpResponse.http200("Report success", data);
     } catch (error) {
       return errorService.handleErrorSchema(error);
     }
