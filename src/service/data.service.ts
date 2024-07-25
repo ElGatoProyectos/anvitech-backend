@@ -279,6 +279,11 @@ class DataService {
             const responseNewWorker = await workerService.createNoHireDate(
               newWorker
             );
+
+            // validamos si llego al maximo
+
+            if (!responseNewWorker.ok) return;
+
             await scheduleService.createScheduleDefault(
               responseNewWorker.content.id
             );

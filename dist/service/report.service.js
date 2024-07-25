@@ -656,10 +656,25 @@ class ReportService {
     newModelForReport(dateSelected) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(dateSelected);
-                const response = this.getMondayAndSaturdayDatesWParmas(dateSelected);
-                console.log(response);
-                return response_service_1.httpResponse.http200("Report success", response);
+                // console.log(dateSelected);
+                const { startDate, endDate } = this.getMondayAndSaturdayDatesWParmas(dateSelected);
+                const reports = yield prisma_1.default.detailReport.findMany({
+                    where: {
+                        fecha_reporte: {
+                            gte: startDate,
+                            lt: endDate,
+                        },
+                    },
+                });
+                const data = yield Promise.all(reports.map((item) => __awaiter(this, void 0, void 0, function* () {
+                    const dni = item.dni;
+                    const worker = yield worker_service_1.workerService.findByDNI(dni);
+                    return {
+                        report: item,
+                        worker,
+                    };
+                })));
+                return response_service_1.httpResponse.http200("Report success", data);
             }
             catch (error) {
                 return errors_service_1.errorService.handleErrorSchema(error);

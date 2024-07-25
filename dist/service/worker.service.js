@@ -55,6 +55,7 @@ const worker_dto_1 = require("../schemas/worker.dto");
 const schedule_service_1 = require("./schedule.service");
 const report_service_1 = require("./report.service");
 const prisma_1 = __importDefault(require("../prisma"));
+const workers_constant_1 = require("../constants/workers.constant");
 class WorkerService {
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -182,6 +183,11 @@ class WorkerService {
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const workers = yield prisma_1.default.worker.findMany();
+                yield prisma_1.default.$disconnect();
+                if (workers.length >= workers_constant_1.maxWorkers) {
+                    return response_service_1.httpResponse.http400("Error, trabajadores maximos");
+                }
                 worker_dto_1.createWorkerDTO.parse(data);
                 const formatData = Object.assign(Object.assign({}, data), { hire_date: (0, date_transform_1.formatDateForPrisma)(data.hire_date) });
                 const created = yield prisma_1.default.worker.create({ data: formatData });
@@ -197,6 +203,10 @@ class WorkerService {
     createNoHireDate(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const workers = yield prisma_1.default.worker.findMany();
+                if (workers.length >= workers_constant_1.maxWorkers) {
+                    return response_service_1.httpResponse.http400();
+                }
                 const created = yield prisma_1.default.worker.create({ data });
                 yield prisma_1.default.$disconnect();
                 return response_service_1.httpResponse.http201("Worker created", created);

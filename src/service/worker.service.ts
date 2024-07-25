@@ -9,6 +9,7 @@ import { createWorkerDTO } from "../schemas/worker.dto";
 import { scheduleService } from "./schedule.service";
 import { reportService } from "./report.service";
 import prisma from "../prisma";
+import { maxWorkers } from "../constants/workers.constant";
 
 class WorkerService {
   async findAll() {
@@ -145,7 +146,13 @@ class WorkerService {
 
   async create(data: any) {
     try {
+      const workers = await prisma.worker.findMany();
+      await prisma.$disconnect();
+      if (workers.length >= maxWorkers) {
+        return httpResponse.http400("Error, trabajadores maximos");
+      }
       createWorkerDTO.parse(data);
+
       const formatData = {
         ...data,
         hire_date: formatDateForPrisma(data.hire_date),
@@ -161,6 +168,10 @@ class WorkerService {
 
   async createNoHireDate(data: any) {
     try {
+      const workers = await prisma.worker.findMany();
+      if (workers.length >= maxWorkers) {
+        return httpResponse.http400();
+      }
       const created = await prisma.worker.create({ data });
       await prisma.$disconnect();
       return httpResponse.http201("Worker created", created);

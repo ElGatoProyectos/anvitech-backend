@@ -208,6 +208,9 @@ class DataService {
                                 position: row.employee.job_title,
                             };
                             const responseNewWorker = yield worker_service_1.workerService.createNoHireDate(newWorker);
+                            // validamos si llego al maximo
+                            if (!responseNewWorker.ok)
+                                return;
                             yield schedule_service_1.scheduleService.createScheduleDefault(responseNewWorker.content.id);
                             yield this.newMethodRegisterReport(responseNewWorker.content, rowState, dayString, report, day, selectedMonth, selectedYear);
                         }
