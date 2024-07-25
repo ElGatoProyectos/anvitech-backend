@@ -152,6 +152,11 @@ class WorkerService {
                             ? "No definido"
                             : item.gestor_comercial,
                     };
+                    const workers = yield prisma_1.default.worker.findMany();
+                    yield prisma_1.default.$disconnect();
+                    if (workers.length >= workers_constant_1.maxWorkers) {
+                        return response_service_1.httpResponse.http400("Error, trabajadores maximos");
+                    }
                     yield prisma_1.default.worker.create({ data: formatData });
                 })));
                 /// registrar los horarios por defecto

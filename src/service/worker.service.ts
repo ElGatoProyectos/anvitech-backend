@@ -107,7 +107,11 @@ class WorkerService {
                 ? "No definido"
                 : item.gestor_comercial,
           };
-
+          const workers = await prisma.worker.findMany();
+          await prisma.$disconnect();
+          if (workers.length >= maxWorkers) {
+            return httpResponse.http400("Error, trabajadores maximos");
+          }
           await prisma.worker.create({ data: formatData });
         })
       );
