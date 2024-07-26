@@ -292,34 +292,37 @@ class DataService {
                             newHour = 23 - 4 + Number(hour);
                         }
                         if (newHour <= 11) {
-                            formatData.hora_inicio = newHour + ":" + minutes;
-                            if (newHour > Number(hourStart)) {
-                                // si es mas que las 9 am o sea 10 am
-                                formatData.tardanza = "si";
-                                formatData.discount = 35;
-                            }
-                            else {
-                                if (newHour === 9) {
-                                    if (Number(minutes) <= 5) {
-                                        formatData.tardanza = "no";
-                                    }
-                                    else if (Number(minutes) > 5 && Number(minutes) <= 15) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 5;
-                                    }
-                                    else if (Number(minutes) > 15 && Number(minutes) <= 30) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 10;
-                                    }
-                                    else if (Number(minutes) > 30 && Number(minutes) <= 59) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 20;
-                                    }
+                            //-todo aqui agregue el if para validar la hora de inicio
+                            if (formatData.hora_inicio === "") {
+                                formatData.hora_inicio = newHour + ":" + minutes;
+                                if (newHour > Number(hourStart)) {
+                                    // si es mas que las 9 am o sea 10 am
+                                    formatData.tardanza = "si";
+                                    formatData.discount = 35;
                                 }
                                 else {
-                                    formatData.tardanza = "no";
-                                    formatData.falta = "no";
-                                    formatData.discount = 0;
+                                    if (newHour === 9) {
+                                        if (Number(minutes) <= 5) {
+                                            formatData.tardanza = "no";
+                                        }
+                                        else if (Number(minutes) > 5 && Number(minutes) <= 15) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 5;
+                                        }
+                                        else if (Number(minutes) > 15 && Number(minutes) <= 30) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 10;
+                                        }
+                                        else if (Number(minutes) > 30 && Number(minutes) <= 59) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 20;
+                                        }
+                                    }
+                                    else {
+                                        formatData.tardanza = "no";
+                                        formatData.falta = "no";
+                                        formatData.discount = 0;
+                                    }
                                 }
                             }
                         }
@@ -500,34 +503,36 @@ class DataService {
                             newHour = 23 - 4 + Number(hour);
                         }
                         if (newHour <= 11) {
-                            formatData.hora_inicio = newHour + ":" + minutes;
-                            if (newHour > Number(hourStart)) {
-                                // si es mas que las 9 am o sea 10 am
-                                formatData.tardanza = "si";
-                                formatData.discount = 35;
-                            }
-                            else {
-                                if (newHour === 9) {
-                                    if (Number(minutes) <= 5) {
-                                        formatData.tardanza = "no";
-                                    }
-                                    else if (Number(minutes) > 5 && Number(minutes) <= 15) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 5;
-                                    }
-                                    else if (Number(minutes) > 15 && Number(minutes) <= 30) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 10;
-                                    }
-                                    else if (Number(minutes) > 30 && Number(minutes) <= 59) {
-                                        formatData.tardanza = "si";
-                                        formatData.discount = 20;
-                                    }
+                            if (formatData.hora_inicio === "") {
+                                formatData.hora_inicio = newHour + ":" + minutes;
+                                if (newHour > Number(hourStart)) {
+                                    // si es mas que las 9 am o sea 10 am
+                                    formatData.tardanza = "si";
+                                    formatData.discount = 35;
                                 }
                                 else {
-                                    formatData.tardanza = "no";
-                                    formatData.falta = "no";
-                                    formatData.discount = 0;
+                                    if (newHour === 9) {
+                                        if (Number(minutes) <= 5) {
+                                            formatData.tardanza = "no";
+                                        }
+                                        else if (Number(minutes) > 5 && Number(minutes) <= 15) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 5;
+                                        }
+                                        else if (Number(minutes) > 15 && Number(minutes) <= 30) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 10;
+                                        }
+                                        else if (Number(minutes) > 30 && Number(minutes) <= 59) {
+                                            formatData.tardanza = "si";
+                                            formatData.discount = 20;
+                                        }
+                                    }
+                                    else {
+                                        formatData.tardanza = "no";
+                                        formatData.falta = "no";
+                                        formatData.discount = 0;
+                                    }
                                 }
                             }
                         }
