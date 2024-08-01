@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cronStart = void 0;
+exports.cronStart = cronStart;
 const prisma_1 = __importDefault(require("../prisma"));
 const data_service_1 = require("../service/data.service");
 const node_cron_1 = __importDefault(require("node-cron"));
@@ -49,4 +49,3 @@ function cronStart() {
         }
     }));
 }
-exports.cronStart = cronStart;

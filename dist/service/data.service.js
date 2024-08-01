@@ -21,8 +21,8 @@ const worker_service_1 = require("./worker.service");
 const schedule_service_1 = require("./schedule.service");
 const prisma_1 = __importDefault(require("../prisma"));
 class DataService {
-    instanceDataInit(minDay, maxDay, selectedYear, selectedMonth, isReport = true) {
-        return __awaiter(this, void 0, void 0, function* () {
+    instanceDataInit(minDay_1, maxDay_1, selectedYear_1, selectedMonth_1) {
+        return __awaiter(this, arguments, void 0, function* (minDay, maxDay, selectedYear, selectedMonth, isReport = true) {
             try {
                 /// obtener fecha y hora actual
                 const { monday, saturday } = yield this.getMondayAndSaturday();
@@ -241,6 +241,7 @@ class DataService {
             }
         });
     }
+    // [note] here is report
     newMethodRegisterReport(worker, dataDayForWorker, dayString, report, dayI, monthI, yearI) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -444,6 +445,15 @@ class DataService {
                     formatData.tardanza = "no";
                     formatData.discount = 35;
                 }
+                // [note] aqui esta el caso ha modificar
+                if (formatData.hora_inicio === "" ||
+                    formatData.hora_inicio_refrigerio === "" ||
+                    formatData.hora_fin_refrigerio === "" ||
+                    formatData.hora_salida === "") {
+                    formatData.falta = "si";
+                    formatData.tardanza = "no";
+                    formatData.discount = 35;
+                }
                 if (vacationResponse.length > 0 ||
                     permissionResponse.length > 0 ||
                     licencesResponse.length > 0 ||
@@ -640,6 +650,14 @@ class DataService {
                     },
                 });
                 if (dataDayForWorker.length < 4) {
+                    formatData.falta = "si";
+                    formatData.tardanza = "no";
+                    formatData.discount = 35;
+                }
+                if (formatData.hora_inicio === "" ||
+                    formatData.hora_inicio_refrigerio === "" ||
+                    formatData.hora_fin_refrigerio === "" ||
+                    formatData.hora_salida === "") {
                     formatData.falta = "si";
                     formatData.tardanza = "no";
                     formatData.discount = 35;
@@ -855,8 +873,12 @@ class DataService {
                     formatData.tardanza = "no";
                     formatData.discount = 0;
                 }
-                else {
+                if (formatData.hora_inicio === "" ||
+                    formatData.hora_inicio_refrigerio === "" ||
+                    formatData.hora_fin_refrigerio === "" ||
+                    formatData.hora_salida === "") {
                     formatData.falta = "si";
+                    formatData.tardanza = "no";
                     formatData.discount = 35;
                 }
                 yield prisma_1.default.detailReport.create({ data: formatData });

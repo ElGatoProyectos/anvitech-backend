@@ -1,1 +1,1 @@
-export const maxWorkers = 70;
+export const maxWorkers = 10000;

@@ -338,6 +338,7 @@ class DataService {
     }
   }
 
+  // [note] here is report
   async newMethodRegisterReport(
     worker: any,
     dataDayForWorker: any[],
@@ -571,6 +572,18 @@ class DataService {
         formatData.discount = 35;
       }
 
+      // [note] aqui esta el caso ha modificar
+      if (
+        formatData.hora_inicio === "" ||
+        formatData.hora_inicio_refrigerio === "" ||
+        formatData.hora_fin_refrigerio === "" ||
+        formatData.hora_salida === ""
+      ) {
+        formatData.falta = "si";
+        formatData.tardanza = "no";
+        formatData.discount = 35;
+      }
+
       if (
         vacationResponse.length > 0 ||
         permissionResponse.length > 0 ||
@@ -792,6 +805,17 @@ class DataService {
       });
 
       if (dataDayForWorker.length < 4) {
+        formatData.falta = "si";
+        formatData.tardanza = "no";
+        formatData.discount = 35;
+      }
+
+      if (
+        formatData.hora_inicio === "" ||
+        formatData.hora_inicio_refrigerio === "" ||
+        formatData.hora_fin_refrigerio === "" ||
+        formatData.hora_salida === ""
+      ) {
         formatData.falta = "si";
         formatData.tardanza = "no";
         formatData.discount = 35;
@@ -1037,8 +1061,16 @@ class DataService {
         formatData.falta = "no";
         formatData.tardanza = "no";
         formatData.discount = 0;
-      } else {
+      }
+
+      if (
+        formatData.hora_inicio === "" ||
+        formatData.hora_inicio_refrigerio === "" ||
+        formatData.hora_fin_refrigerio === "" ||
+        formatData.hora_salida === ""
+      ) {
         formatData.falta = "si";
+        formatData.tardanza = "no";
         formatData.discount = 35;
       }
 
