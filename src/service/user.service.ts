@@ -135,31 +135,31 @@ class UserService {
       const { validate } = data;
       if (validate === "1234abc") {
         const admin = {
-          full_name: "QUISPE FERNANDEZ HECTOR JUAN",
-          dni: "06763716",
+          full_name: "REBECA BEATRIZ TUMBA PEREZ",
+          dni: "72913930",
           email: "admin@gmail.com",
-          password: bcrypt.hashSync("06763716", 11),
-          username: "06763716",
+          password: bcrypt.hashSync("72913930", 11),
+          username: "72913930",
+          enabled: true,
+          role: "superadmin",
+        };
+
+        const admin2 = {
+          full_name: "JOSE FERNANDO ROJAS RUIZ",
+          dni: "45843270",
+          email: "admin@gmail.com",
+          password: bcrypt.hashSync("45843270", 11),
+          username: "45843270",
           enabled: true,
           role: "admin",
         };
 
-        // const admin2 = {
-        //   full_name: "JOSE FERNANDO ROJAS RUIZ",
-        //   dni: "45843270",
-        //   email: "admin@gmail.com",
-        //   password: bcrypt.hashSync("45843270", 11),
-        //   username: "45843270",
-        //   enabled: true,
-        //   role: "admin",
-        // };
-
         const superadmin = {
-          full_name: "VILCHEZ MARTINEZ SEGUNDO JUAN DE MATTA",
-          dni: "08464558",
+          full_name: "ELVA  HONORIO ROJAS",
+          dni: "10160437",
           email: "superadmin@digimax.pe",
-          password: bcrypt.hashSync("08464558", 11),
-          username: "08464558",
+          password: bcrypt.hashSync("10160437", 11),
+          username: "10160437",
           enabled: true,
           role: "superadmin",
         };
