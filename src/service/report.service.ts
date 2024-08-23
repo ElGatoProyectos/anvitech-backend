@@ -1562,6 +1562,32 @@ class ReportService {
       return true;
     return false;
   }
+
+  async restoreReport(
+    day: number,
+    month: number,
+    year: number,
+    dateString: string
+  ) {
+    try {
+      // eliminamos todos los registros con respecto a esa fecha
+
+      await prisma.detailReport.deleteMany({
+        where: { fecha_reporte: dateString },
+      });
+      // insertamos el nuevo registro
+
+      await dataService.instanceDataInit(day, day, year, month, true);
+
+      await prisma.$disconnect();
+
+      return httpResponse.http200("Report restored", "ok");
+    } catch (error) {
+      console.log(error);
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
+  }
 }
 
 export const reportService = new ReportService();

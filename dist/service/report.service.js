@@ -39,6 +39,7 @@ exports.reportService = void 0;
 const errors_service_1 = require("./errors.service");
 const response_service_1 = require("./response.service");
 const xlsx = __importStar(require("xlsx"));
+const data_service_1 = require("./data.service");
 const worker_service_1 = require("./worker.service");
 const schedule_service_1 = require("./schedule.service");
 const prisma_1 = __importDefault(require("../prisma"));
@@ -1455,6 +1456,25 @@ class ReportService {
                 incidentResponse.length > 0)
                 return true;
             return false;
+        });
+    }
+    restoreReport(day, month, year, dateString) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // eliminamos todos los registros con respecto a esa fecha
+                yield prisma_1.default.detailReport.deleteMany({
+                    where: { fecha_reporte: dateString },
+                });
+                // insertamos el nuevo registro
+                yield data_service_1.dataService.instanceDataInit(day, day, year, month, true);
+                yield prisma_1.default.$disconnect();
+                return response_service_1.httpResponse.http200("Report restored", "ok");
+            }
+            catch (error) {
+                console.log(error);
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
         });
     }
 }
