@@ -25,6 +25,7 @@ class DataService {
         return __awaiter(this, arguments, void 0, function* (minDay, maxDay, selectedYear, selectedMonth, isReport = true) {
             try {
                 /// obtener fecha y hora actual
+                // min and max
                 const { monday, saturday } = yield this.getMondayAndSaturday();
                 const { year: dataYear, month: dataMonth } = yield this.getDate();
                 const min = minDay !== null && minDay !== void 0 ? minDay : monday;
@@ -1180,6 +1181,7 @@ class DataService {
     captureDataForDay(token, day, month, year) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                // /2024-7-13T13:33:00+00:00
                 const begin_time = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T05:00:00+00:00`;
                 let endDate = new Date(year, month - 1, day + 1, 5, 0, 0);
                 let end_time;

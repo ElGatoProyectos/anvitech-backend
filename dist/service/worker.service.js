@@ -328,8 +328,12 @@ class WorkerService {
                 const sheetToJson = xlsx.utils.sheet_to_json(sheet);
                 yield Promise.all(sheetToJson.map((item) => __awaiter(this, void 0, void 0, function* () {
                     const dateFormat = (0, date_transform_1.excelSerialDateToJSDate)(item.fecha_cese);
-                    if (item.dni === "" || item.fecha_cese === "")
-                        throw new Error("Error in service");
+                    const worker = yield prisma_1.default.worker.findFirst({
+                        where: { dni: String(item.dni) },
+                    });
+                    if (!worker) {
+                        return;
+                    }
                     yield prisma_1.default.worker.update({
                         where: { dni: String(item.dni) },
                         data: {
@@ -343,6 +347,7 @@ class WorkerService {
                 return response_service_1.httpResponse.http200("Updated");
             }
             catch (error) {
+                console.log(error);
                 yield prisma_1.default.$disconnect();
                 return errors_service_1.errorService.handleErrorSchema(error);
             }

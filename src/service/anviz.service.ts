@@ -34,10 +34,10 @@ class AnvizService {
     end_time: string,
     order = "asc",
     page = 1,
-    per_page = 10000000000
+    per_page = 100
   ) {
     // begin_time: "2022-06-01T12:46:43+00:00",
-    //       end_time: "2024-05-24T12:46:43+00:00",
+    // end_time: "2024-05-24T12:46:43+00:00",
     try {
       const response = await axios.post("https://api.us.crosschexcloud.com/", {
         header: {

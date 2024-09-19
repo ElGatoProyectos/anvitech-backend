@@ -18,6 +18,7 @@ class DataService {
   ) {
     try {
       /// obtener fecha y hora actual
+      // min and max
       const { monday, saturday } = await this.getMondayAndSaturday();
       const { year: dataYear, month: dataMonth } = await this.getDate();
 
@@ -1432,6 +1433,7 @@ class DataService {
     year: number
   ) {
     try {
+      // /2024-7-13T13:33:00+00:00
       const begin_time = `${year}-${String(month).padStart(2, "0")}-${String(
         day
       ).padStart(2, "0")}T05:00:00+00:00`;

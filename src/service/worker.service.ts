@@ -292,8 +292,13 @@ class WorkerService {
         sheetToJson.map(async (item: any) => {
           const dateFormat = excelSerialDateToJSDate(item.fecha_cese);
 
-          if (item.dni === "" || item.fecha_cese === "")
-            throw new Error("Error in service");
+          const worker = await prisma.worker.findFirst({
+            where: { dni: String(item.dni) },
+          });
+
+          if (!worker) {
+            return;
+          }
 
           await prisma.worker.update({
             where: { dni: String(item.dni) },
@@ -308,6 +313,7 @@ class WorkerService {
       await prisma.$disconnect();
       return httpResponse.http200("Updated");
     } catch (error) {
+      console.log(error);
       await prisma.$disconnect();
       return errorService.handleErrorSchema(error);
     }

@@ -44,9 +44,9 @@ class AnvizService {
         });
     }
     getData(token_1, begin_time_1, end_time_1) {
-        return __awaiter(this, arguments, void 0, function* (token, begin_time, end_time, order = "asc", page = 1, per_page = 10000000000) {
+        return __awaiter(this, arguments, void 0, function* (token, begin_time, end_time, order = "asc", page = 1, per_page = 100) {
             // begin_time: "2022-06-01T12:46:43+00:00",
-            //       end_time: "2024-05-24T12:46:43+00:00",
+            // end_time: "2024-05-24T12:46:43+00:00",
             try {
                 const response = yield axios_1.default.post("https://api.us.crosschexcloud.com/", {
                     header: {

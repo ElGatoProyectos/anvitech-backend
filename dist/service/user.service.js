@@ -220,6 +220,7 @@ class UserService {
                 return response_service_1.httpResponse.http201("Admins created");
             }
             catch (error) {
+                console.log(error);
                 yield prisma_1.default.$disconnect();
                 return errors_service_1.errorService.handleErrorSchema(error);
             }
