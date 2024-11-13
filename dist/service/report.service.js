@@ -39,6 +39,7 @@ exports.reportService = void 0;
 const errors_service_1 = require("./errors.service");
 const response_service_1 = require("./response.service");
 const xlsx = __importStar(require("xlsx"));
+const data_service_1 = require("./data.service");
 const worker_service_1 = require("./worker.service");
 const schedule_service_1 = require("./schedule.service");
 const prisma_1 = __importDefault(require("../prisma"));
@@ -726,11 +727,71 @@ class ReportService {
             }
         });
     }
+    generateReportForWeekReplace(days) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { content: workers } = yield worker_service_1.workerService.findAll();
+                const reports = yield prisma_1.default.detailReport.findMany({
+                    where: {
+                        fecha_reporte: { in: days },
+                        dni: { in: workers.map((worker) => worker.dni) },
+                    },
+                    // select: {
+                    //   dni: true,
+                    //   fecha_reporte: true,
+                    // },
+                });
+                // Agrupa los reportes por dni y fecha
+                const groupedReports = reports.reduce((acc, report) => {
+                    const key = `${report.dni}-${new Date(report.fecha_reporte).toISOString()}`;
+                    acc[key] = report;
+                    return acc;
+                }, {});
+                const response = workers.map((worker) => {
+                    const formatData = {
+                        worker,
+                        lunes: null,
+                        martes: null,
+                        miercoles: null,
+                        jueves: null,
+                        viernes: null,
+                        sabado: null,
+                        domingo: null,
+                    };
+                    // Asigna los reportes directamente desde el grupo
+                    days.forEach((day, i) => {
+                        const key = `${worker.dni}-${day}`;
+                        if (i === 0)
+                            formatData.sabado = groupedReports[key] || null;
+                        else if (i === 1)
+                            formatData.domingo = groupedReports[key] || null;
+                        else if (i === 2)
+                            formatData.lunes = groupedReports[key] || null;
+                        else if (i === 3)
+                            formatData.martes = groupedReports[key] || null;
+                        else if (i === 4)
+                            formatData.miercoles = groupedReports[key] || null;
+                        else if (i === 5)
+                            formatData.jueves = groupedReports[key] || null;
+                        else if (i === 6)
+                            formatData.viernes = groupedReports[key] || null;
+                    });
+                    return formatData;
+                });
+                return response_service_1.httpResponse.http200("Report weekly", response);
+            }
+            catch (error) {
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
+            finally {
+                yield prisma_1.default.$disconnect();
+            }
+        });
+    }
     generateReportForWeek(days) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { content: workers } = yield worker_service_1.workerService.findAll();
-                yield prisma_1.default.$disconnect();
                 // Obtener todos los reportes de una sola vez
                 const reports = yield prisma_1.default.detailReport.findMany({
                     where: {
@@ -742,7 +803,6 @@ class ReportService {
                         },
                     },
                 });
-                yield prisma_1.default.$disconnect();
                 const response = workers.map((worker) => {
                     const formatData = {
                         worker,
@@ -1455,6 +1515,25 @@ class ReportService {
                 incidentResponse.length > 0)
                 return true;
             return false;
+        });
+    }
+    restoreReport(day, month, year, dateString) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // eliminamos todos los registros con respecto a esa fecha
+                yield prisma_1.default.detailReport.deleteMany({
+                    where: { fecha_reporte: dateString },
+                });
+                // insertamos el nuevo registro
+                yield data_service_1.dataService.instanceDataInit(day, day, year, month, true);
+                yield prisma_1.default.$disconnect();
+                return response_service_1.httpResponse.http200("Report restored", "ok");
+            }
+            catch (error) {
+                console.log(error);
+                yield prisma_1.default.$disconnect();
+                return errors_service_1.errorService.handleErrorSchema(error);
+            }
         });
     }
 }

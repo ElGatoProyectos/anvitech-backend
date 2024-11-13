@@ -33,6 +33,7 @@ router.post("/report-dynamic", (req, res) => {
     // Handler for /report-dynamic route
 });
 // Reports routes
+router.post("/reports/restore/day", report_controller_1.reportController.reportRestoreDayPost); // restore report
 router.get("/reports/:id", report_controller_1.reportController.reportIdGet);
 router.get("/reports/day", report_controller_1.reportController.reportDayGet);
 router.post("/reports/day", report_controller_1.reportController.reportDayPost);

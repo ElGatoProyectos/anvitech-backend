@@ -1,7 +1,10 @@
 export function excelSerialDateToJSDate(serial: number) {
   const excelEpoch = new Date(1900, 0, 1);
-  // const days = serial - 1; esto aumentaba supuestamente uno a la fecha
-  const days = serial;
+  let days = serial;
+
+  if (serial >= 60) {
+    days -= 2;
+  }
 
   return new Date(excelEpoch.getTime() + days * 24 * 60 * 60 * 1000);
 }

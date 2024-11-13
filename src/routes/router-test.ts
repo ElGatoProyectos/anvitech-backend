@@ -37,9 +37,11 @@ router.post("/report-dynamic", (req, res) => {
 });
 
 // Reports routes
+router.post("/reports/restore/day", reportController.reportRestoreDayPost); // restore report
 router.get("/reports/:id", reportController.reportIdGet);
 router.get("/reports/day", reportController.reportDayGet);
 router.post("/reports/day", reportController.reportDayPost);
+
 router.post("/reports/detail", reportController.reportDetailPost);
 router.put("/reports/detail/:id", reportController.reportDetailPut);
 router.delete("/reports/detail/:id", reportController.reportDetailDelete);

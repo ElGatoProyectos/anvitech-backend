@@ -123,6 +123,36 @@ class ReportController {
     }
   }
 
+  async reportRestoreDayPost(
+    request: Request,
+    response: Response
+  ): Promise<void> {
+    try {
+      const { dateSelectedRestore } = request.body;
+
+      // reciep 2024-08-21
+      // transform to 2024-07-01 05:00:00.000
+
+      const [year, month, day] = dateSelectedRestore.split("-").map(Number);
+
+      // const date = new Date(year, month - 1, day, 5, 0, 0, 0);
+
+      // Convert the Date object to an ISO-8601 string
+      const dateString = dateSelectedRestore + "T05:00:00.000Z";
+
+      const result = await reportService.restoreReport(
+        day,
+        month,
+        year,
+        dateString
+      );
+      response.status(result.statusCode).json(result.content);
+    } catch (error) {
+      console.log(error);
+      response.status(500).json(error);
+    }
+  }
+
   //todo used
   async reportDetailPost(request: Request, response: Response): Promise<void> {
     try {
@@ -376,7 +406,10 @@ class ReportController {
         yearBody
       );
 
-      const responseData = await reportService.generateReportForWeek(allDays);
+      // const responseData = await reportService.generateReportForWeek(allDays);
+      const responseData = await reportService.generateReportForWeekReplace(
+        allDays
+      );
 
       response.status(responseData.statusCode).json(responseData.content);
     } catch (error) {

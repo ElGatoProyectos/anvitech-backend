@@ -116,6 +116,25 @@ class ReportController {
             }
         });
     }
+    reportRestoreDayPost(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { dateSelectedRestore } = request.body;
+                // reciep 2024-08-21
+                // transform to 2024-07-01 05:00:00.000
+                const [year, month, day] = dateSelectedRestore.split("-").map(Number);
+                // const date = new Date(year, month - 1, day, 5, 0, 0, 0);
+                // Convert the Date object to an ISO-8601 string
+                const dateString = dateSelectedRestore + "T05:00:00.000Z";
+                const result = yield report_service_1.reportService.restoreReport(day, month, year, dateString);
+                response.status(result.statusCode).json(result.content);
+            }
+            catch (error) {
+                console.log(error);
+                response.status(500).json(error);
+            }
+        });
+    }
     //todo used
     reportDetailPost(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -323,7 +342,8 @@ class ReportController {
                 const monthBody = Number(body.month);
                 const yearBody = Number(body.year);
                 const allDays = yield data_service_1.dataService.getDaysFromLastSaturdayToThisFriday(dayBody, monthBody, yearBody);
-                const responseData = yield report_service_1.reportService.generateReportForWeek(allDays);
+                // const responseData = await reportService.generateReportForWeek(allDays);
+                const responseData = yield report_service_1.reportService.generateReportForWeekReplace(allDays);
                 response.status(responseData.statusCode).json(responseData.content);
             }
             catch (error) {

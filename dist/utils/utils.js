@@ -17,7 +17,7 @@ const prisma_1 = __importDefault(require("../prisma"));
 const data_service_1 = require("../service/data.service");
 const node_cron_1 = __importDefault(require("node-cron"));
 function cronStart() {
-    node_cron_1.default.schedule("*/58 * * * *", () => __awaiter(this, void 0, void 0, function* () {
+    node_cron_1.default.schedule("0 5 * * 0,2-6", () => __awaiter(this, void 0, void 0, function* () {
         try {
             const limaTime = new Date().toLocaleString("en-US", {
                 timeZone: "America/Lima",
@@ -25,23 +25,17 @@ function cronStart() {
             const limaDate = new Date(limaTime);
             const previousDayTimestamp = limaDate.getTime() - 24 * 60 * 60 * 1000;
             const previousDayDate = new Date(previousDayTimestamp);
-            const dayOfWeek = limaDate.getDay();
             // solo evitaria si fuese lunes, porque si es lunes jalaria del domingo
-            if (dayOfWeek !== 1) {
-                const dayOfMonth = previousDayDate.getDate();
-                const month = previousDayDate.getMonth() + 1;
-                const year = previousDayDate.getFullYear();
-                const currentHour = new Date(limaTime).getHours();
-                // validamos si existen registros para esa fecha
-                const newDateFormat = `${year} + "-" + ${month} + "-" + ${dayOfMonth} + " 05:00:00.000"`;
-                if (currentHour === 5) {
-                    const response = yield prisma_1.default.detailReport.findMany({
-                        where: { fecha_reporte: newDateFormat },
-                    });
-                    if (response.length === 0) {
-                        yield data_service_1.dataService.instanceDataInit(dayOfMonth, dayOfMonth, year, month, true);
-                    }
-                }
+            const dayOfMonth = previousDayDate.getDate();
+            const month = previousDayDate.getMonth() + 1;
+            const year = previousDayDate.getFullYear();
+            // validamos si existen registros para esa fecha
+            const newDateFormat = `${year}-${month}-${dayOfMonth} 05:00:00.000`;
+            const response = yield prisma_1.default.detailReport.findMany({
+                where: { fecha_reporte: newDateFormat },
+            });
+            if (response.length === 0) {
+                yield data_service_1.dataService.instanceDataInit(dayOfMonth, dayOfMonth, year, month, true);
             }
         }
         catch (error) {

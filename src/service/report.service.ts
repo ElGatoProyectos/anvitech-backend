@@ -728,11 +728,67 @@ class ReportService {
     }
   }
 
+  async generateReportForWeekReplace(days: string[]) {
+    try {
+      const { content: workers } = await workerService.findAll();
+
+      const reports = await prisma.detailReport.findMany({
+        where: {
+          fecha_reporte: { in: days },
+          dni: { in: workers.map((worker: any) => worker.dni) },
+        },
+        // select: {
+        //   dni: true,
+        //   fecha_reporte: true,
+        // },
+      });
+
+      // Agrupa los reportes por dni y fecha
+      const groupedReports = reports.reduce((acc: any, report: any) => {
+        const key = `${report.dni}-${new Date(
+          report.fecha_reporte
+        ).toISOString()}`;
+        acc[key] = report;
+        return acc;
+      }, {});
+
+      const response = workers.map((worker: any) => {
+        const formatData: any = {
+          worker,
+          lunes: null,
+          martes: null,
+          miercoles: null,
+          jueves: null,
+          viernes: null,
+          sabado: null,
+          domingo: null,
+        };
+
+        // Asigna los reportes directamente desde el grupo
+        days.forEach((day, i) => {
+          const key = `${worker.dni}-${day}`;
+          if (i === 0) formatData.sabado = groupedReports[key] || null;
+          else if (i === 1) formatData.domingo = groupedReports[key] || null;
+          else if (i === 2) formatData.lunes = groupedReports[key] || null;
+          else if (i === 3) formatData.martes = groupedReports[key] || null;
+          else if (i === 4) formatData.miercoles = groupedReports[key] || null;
+          else if (i === 5) formatData.jueves = groupedReports[key] || null;
+          else if (i === 6) formatData.viernes = groupedReports[key] || null;
+        });
+
+        return formatData;
+      });
+      return httpResponse.http200("Report weekly", response);
+    } catch (error) {
+      return errorService.handleErrorSchema(error);
+    } finally {
+      await prisma.$disconnect();
+    }
+  }
+
   async generateReportForWeek(days: string[]) {
     try {
       const { content: workers } = await workerService.findAll();
-      await prisma.$disconnect();
-
       // Obtener todos los reportes de una sola vez
       const reports = await prisma.detailReport.findMany({
         where: {
@@ -744,9 +800,6 @@ class ReportService {
           },
         },
       });
-
-      await prisma.$disconnect();
-
       const response = workers.map((worker: any) => {
         const formatData: any = {
           worker,
@@ -1561,6 +1614,32 @@ class ReportService {
     )
       return true;
     return false;
+  }
+
+  async restoreReport(
+    day: number,
+    month: number,
+    year: number,
+    dateString: string
+  ) {
+    try {
+      // eliminamos todos los registros con respecto a esa fecha
+
+      await prisma.detailReport.deleteMany({
+        where: { fecha_reporte: dateString },
+      });
+      // insertamos el nuevo registro
+
+      await dataService.instanceDataInit(day, day, year, month, true);
+
+      await prisma.$disconnect();
+
+      return httpResponse.http200("Report restored", "ok");
+    } catch (error) {
+      console.log(error);
+      await prisma.$disconnect();
+      return errorService.handleErrorSchema(error);
+    }
   }
 }
 
