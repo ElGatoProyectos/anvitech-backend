@@ -347,7 +347,6 @@ class WorkerService {
                 return response_service_1.httpResponse.http200("Updated");
             }
             catch (error) {
-                console.log(error);
                 yield prisma_1.default.$disconnect();
                 return errors_service_1.errorService.handleErrorSchema(error);
             }

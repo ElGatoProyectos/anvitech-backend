@@ -310,10 +310,10 @@ class WorkerService {
           });
         })
       );
+
       await prisma.$disconnect();
       return httpResponse.http200("Updated");
     } catch (error) {
-      console.log(error);
       await prisma.$disconnect();
       return errorService.handleErrorSchema(error);
     }
